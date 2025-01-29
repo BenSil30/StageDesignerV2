@@ -1,0 +1,20 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: center; display: flex;">
+        <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
+            <engine:Button text="Bloom" name="BloomButton" style="justify-content: flex-end; width: 214px; height: 55px; font-size: 33px;" />
+            <engine:Label text="On" name="BloomLabel" style="font-size: 34px; color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
+            <engine:Button text="Fog" name="FogButton" style="width: 224px; justify-content: flex-end; height: 55px; font-size: 33px;" />
+            <engine:Label text="On" name="FogLabel" style="font-size: 34px; color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
+            <engine:Button text="Film Grain" name="FilmGrainButton" style="width: 224px; justify-content: flex-end; height: 55px; font-size: 33px;" />
+            <engine:Label text="On" name="FilmGrainLabel" style="font-size: 34px; color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 0; flex-direction: row;">
+            <engine:Button text="MotionBlur" name="MotionBlurButton" style="width: 224px; justify-content: flex-end; height: 55px; font-size: 33px;" />
+            <engine:Label text="On" name="MotionBlurLabel" style="font-size: 34px; color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

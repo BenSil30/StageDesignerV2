@@ -1,0 +1,23 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=b19eab582283e574b808dbbbf33927f8&amp;type=3#test" />
+    <engine:VisualElement name="Root" style="flex-grow: 1; align-items: flex-start; justify-content: center; width: auto; display: flex; padding-left: 15px; padding-top: 25px; padding-bottom: 25px; padding-right: -2px;">
+        <engine:Label name="SelectedObject" style="flex-grow: 0; align-items: flex-start; justify-content: center; font-size: 21px; flex-shrink: 0; flex-direction: column-reverse; height: auto;" />
+        <engine:Button text="Next Light" name="NextLightButton" />
+        <engine:SliderInt label="Intensity" value="42" high-value="60" name="LightIntensitySlider" low-value="3" show-input-field="true" fill="false" style="width: 455px; color: rgb(255, 255, 255);" />
+        <engine:Label text="Color" name="ColorTitle" style="font-size: 20px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Red" value="42" high-value="255" name="RedColorSlider" show-input-field="true" fill="false" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Green" value="42" high-value="255" name="GreenColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Blue" value="42" high-value="255" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:Label text="Position" name="PosTitle" style="font-size: 20px; width: auto; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="X Pos" value="42" high-value="30" name="XPosSlider" low-value="-30" show-input-field="true" style="width: 500px; height: 36px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Y Pos" value="42" high-value="30" name="YPosSlider" low-value="-30" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Z Pos" value="42" high-value="30" name="ZPosSlider" low-value="-30" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:Label text="Rotation" name="RotTitle" style="font-size: 20px;" />
+        <engine:SliderInt label="X Rot" value="42" high-value="360" name="XRotSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Y Rot" value="42" high-value="360" name="YRotSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Z Rot" value="42" high-value="360" name="ZRotSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Pulse Rate" value="42" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:SliderInt label="Rot Speed" value="42" high-value="100" name="RotSpeedSlider" style="width: 500px; color: rgb(255, 255, 255);" />
+        <engine:Button text="Start/Stop" name="ToggleAnimationButton" style="font-size: 24px;" />
+    </engine:VisualElement>
+</engine:UXML>
