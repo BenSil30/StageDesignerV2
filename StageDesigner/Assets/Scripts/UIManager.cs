@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 
 public class UIManager : MonoBehaviour
 {
+	public UIDocument HUDDoc;
 	public UIDocument PauseStartDoc;
 	public UIDocument StageSelectionDoc;
 	public UIDocument MusicUploaderDoc;
@@ -17,11 +18,16 @@ public class UIManager : MonoBehaviour
 
 	public bool CursorVisible;
 	public bool IsPaused;
+	public bool HUDVisible;
 	public bool MusicUploaderVisible;
 	public bool LightsPanelVisible;
 	public bool PauseStartVisible;
 	public bool StageSelectionVisible;
 	public bool GraphicsSettingsVisible;
+
+	#region HUD UI Elements
+	private Button _pauseMenuButton;
+	#endregion 
 
 	#region Pause/Start UI Elements
 
@@ -115,7 +121,14 @@ public class UIManager : MonoBehaviour
 	// Start is called before the first frame update
 	private void Start()
 	{
-		// Pause/Start UI Elements
+
+		#region HUD UI elements
+		VisualElement HUDRoot = HUDDoc.rootVisualElement;
+		_pauseMenuButton = HUDRoot.Q<Button>("PauseMenuButton");
+		_pauseMenuButton.clicked += PauseMenuButtonClicked;
+		#endregion
+		
+		#region Pause/Start UI Elements
 		VisualElement PauseStartRoot = PauseStartDoc.rootVisualElement;
 		_startResumeButtonP = PauseStartRoot.Q<Button>("StageButton");
 		_goToStageP = PauseStartRoot.Q<Button>("ChooseStageButton");
@@ -126,8 +139,10 @@ public class UIManager : MonoBehaviour
 		_goToStageP.clicked += GoToStageClicked;
 		_exportButtonP.clicked += ExportClicked;
 		_graphicsSettignsButtonP.clicked += GraphicsSettingsButtonClicked;
+		#endregion
 
-		// Stage Selection UI Elements
+
+		#region Stage Selection UI Elements
 		VisualElement StageSelectionRoot = StageSelectionDoc.rootVisualElement;
 		_defaultStageButton = StageSelectionRoot.Q<Button>("DefaultButton");
 		_paramountStageButton = StageSelectionRoot.Q<Button>("ParamountButton");
@@ -138,8 +153,9 @@ public class UIManager : MonoBehaviour
 		_paramountStageButton.clicked += ParamountStageClicked;
 		_ogdenStageButton.clicked += OgdenStageClicked;
 		_backButton.clicked += BackClicked;
+		#endregion
 
-		// Music Uploader UI Elements
+		#region Music Uploader UI Elements
 		VisualElement MusicUploaderRoot = MusicUploaderDoc.rootVisualElement;
 		_importButton = MusicUploaderRoot.Q<Button>("UploadButton");
 		_songTitleLabel = MusicUploaderRoot.Q<Label>("SongTitle");
@@ -150,8 +166,9 @@ public class UIManager : MonoBehaviour
 		_importButton.clicked += ImportClicked;
 		_playPauseButton.clicked += PlayPauseMusicClicked;
 		_restartButton.clicked += RestartMusicClicked;
+		#endregion
 
-		// Animation settings UI Elements
+		#region Aniimation settings UI Elements
 		VisualElement LightsAnimationRoot = LightsAnimationDoc.rootVisualElement;
 		SelectedObjectTitle = LightsAnimationRoot.Q<Label>("SelectedObject");
 		NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
@@ -174,8 +191,9 @@ public class UIManager : MonoBehaviour
 		PulseRateSlider = LightsAnimationRoot.Q<SliderInt>("PulseRateSlider");
 		RotSpeedSlider = LightsAnimationRoot.Q<SliderInt>("RotSpeedSlider");
 		StartStopAnimationButton = LightsAnimationRoot.Q<Button>("ToggleAnimationButton");
+		#endregion
 
-		// Graphics settings UI Elements
+		#region Graphics settings UI Elements
 		VisualElement GraphicsSettingsRoot = GraphicsSettingsDoc.rootVisualElement;
 		_bloomToggleButton = GraphicsSettingsRoot.Q<Button>("BloomButton");
 		_fogToggleButton = GraphicsSettingsRoot.Q<Button>("FogButton");
@@ -191,6 +209,7 @@ public class UIManager : MonoBehaviour
 		_fogToggleButton.clicked += FogButtonClicked;
 		_filmGrainToggleButton.clicked += FilmGrainButtonClicked;
 		_motionBlurButton.clicked += MotionBlurButtonClicked;
+		#endregion
 
 		// todo: ADD A PANEL TO PLACE PREFABS LIKE BLENDER INSTEAD OF FLOATING SHIT
 
@@ -199,11 +218,6 @@ public class UIManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.P))
-		{
-			TogglePanelVisibility("PauseStart");
-		}
-
 		if (Input.GetKeyDown(KeyCode.M))
 		{
 			TogglePanelVisibility("MusicUploader");
@@ -237,11 +251,14 @@ public class UIManager : MonoBehaviour
 				PauseStartVisible = true;
 				Time.timeScale = 0f;
 
+				HUDVisible = false;
 				StageSelectionVisible = false;
 				MusicUploaderVisible = false;
 				LightsPanelVisible = false;
 				GraphicsSettingsVisible = false;
 
+				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				HUDDoc.rootVisualElement.focusable = false;
 				PauseStartDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				PauseStartDoc.rootVisualElement.focusable = true;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -259,11 +276,14 @@ public class UIManager : MonoBehaviour
 				StageSelectionVisible = true;
 				Time.timeScale = 0f;
 
+				HUDVisible = false;
 				PauseStartVisible = false;
 				MusicUploaderVisible = false;
 				LightsPanelVisible = false;
 				GraphicsSettingsVisible = false;
 
+				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				HUDDoc.rootVisualElement.focusable = false;
 				PauseStartDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				PauseStartDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Visible;
@@ -280,11 +300,14 @@ public class UIManager : MonoBehaviour
 			case "MusicUploader":
 				MusicUploaderVisible = true;
 
+				HUDVisible = false;
 				PauseStartVisible = false;
 				StageSelectionVisible = false;
 				LightsPanelVisible = false;
 				GraphicsSettingsVisible = false;
 
+				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				HUDDoc.rootVisualElement.focusable = false;
 				PauseStartDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				PauseStartDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -301,11 +324,14 @@ public class UIManager : MonoBehaviour
 			case "LightsAnimation":
 				LightsPanelVisible = true;
 
+				HUDVisible = false;
 				PauseStartVisible = false;
 				StageSelectionVisible = false;
 				MusicUploaderVisible = false;
 				GraphicsSettingsVisible = false;
 
+				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				HUDDoc.rootVisualElement.focusable = false;
 				PauseStartDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				PauseStartDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -323,11 +349,15 @@ public class UIManager : MonoBehaviour
 				GraphicsSettingsVisible = true;
 				Time.timeScale = 0f;
 
+				HUDVisible = false;
 				PauseStartVisible = false;
 				StageSelectionVisible = false;
 				MusicUploaderVisible = false;
 				LightsPanelVisible = false;
 
+
+				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				HUDDoc.rootVisualElement.focusable = false;
 				PauseStartDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				PauseStartDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -342,6 +372,7 @@ public class UIManager : MonoBehaviour
 				break;
 
 			case "AllOff":
+				HUDVisible = true;
 				PauseStartVisible = false;
 				StageSelectionVisible = false;
 				MusicUploaderVisible = false;
@@ -349,6 +380,8 @@ public class UIManager : MonoBehaviour
 				GraphicsSettingsVisible = false;
 				Time.timeScale = 1f;
 
+				HUDDoc.rootVisualElement.style.visibility = Visibility.Visible;
+				HUDDoc.rootVisualElement.focusable = true;
 				PauseStartDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				PauseStartDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -378,6 +411,12 @@ public class UIManager : MonoBehaviour
 		sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[sm.CurrentLightProperties.CurrentLightIndex];
 		sm.CurrentLightProperties.UpdateSliderValues();
 	}
+
+	#region HUD Methods
+	private void PauseMenuButtonClicked(){
+		TogglePanelVisibility("PauseStart");
+	}
+	#endregion
 
 	#region PauseStart Methods
 
