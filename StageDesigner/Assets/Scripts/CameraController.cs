@@ -60,9 +60,20 @@ public class CameraController : MonoBehaviour
 		ApplyCameraTransformation();
 
 		// Stop rotating or zooming when Shift or Mouse Button is released
-		if (Input.GetKeyUp(KeyCode.LeftShift) | Input.GetKeyUp(KeyCode.LeftAlt))
+		if (Input.GetKeyUp(KeyCode.LeftShift))
 		{
 			_isRotating = false;
+			isCursor = false;
+		}
+
+		if (Input.GetKeyUp(KeyCode.LeftAlt))
+		{
+			_isZooming = false;
+			isCursor = false;
+		}
+
+		if (Input.GetMouseButtonUp(2))
+		{
 			_isZooming = false;
 			isCursor = false;
 		}
@@ -75,10 +86,12 @@ public class CameraController : MonoBehaviour
 		_isPanning = true;
 
 		float mouseX = Input.GetAxis("Mouse X");
-		float mouseY = Input.GetAxis("Mouse Y");
+		float mouseY = -Input.GetAxis("Mouse Y");
+		Vector3 rightDirection = transform.right;  // Right direction (camera's local X axis)
+		Vector3 upDirection = transform.up;
 
-		Vector3 panMovement = new Vector3(mouseX * PanSpeed * Time.deltaTime, mouseY * PanSpeed * Time.deltaTime, 0);
-		CameraTarget.position += panMovement;
+		Vector3 panMovement = rightDirection * mouseX * PanSpeed * Time.deltaTime + upDirection * mouseY * PanSpeed * Time.deltaTime;
+		this.transform.position += panMovement;
 	}
 
 	private void HandleRotation()

@@ -1,0 +1,14 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="root" style="flex-grow: 0; flex-direction: column-reverse; height: 797px; width: 1606px;">
+        <engine:Button text="Back" name="BackButtonItemsPanel" style="width: 132px; font-size: 33px;" />
+        <engine:Button text="Spotlight" name="Item0Button" style="width: 200px; font-size: 33px; flex-grow: 0; flex-direction: column;" />
+        <engine:Button text="Blue laser" name="Item1Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="Green laser" name="Item2Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="Purple laser" name="Item3Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="Red laser" name="Item4Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="Three light" name="Item5Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="Discoball" name="Item6Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="Purple fire" name="Item7Button" style="width: 200px; font-size: 33px;" />
+        <engine:Button text="blank" name="Item8Button" style="width: 200px; font-size: 33px;" />
+    </engine:VisualElement>
+</engine:UXML>
