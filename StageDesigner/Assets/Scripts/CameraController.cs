@@ -74,7 +74,7 @@ public class CameraController : MonoBehaviour
 
 		if (Input.GetMouseButtonUp(2))
 		{
-			_isZooming = false;
+			_isPanning = false;
 			isCursor = false;
 		}
 
@@ -87,10 +87,8 @@ public class CameraController : MonoBehaviour
 
 		float mouseX = Input.GetAxis("Mouse X");
 		float mouseY = -Input.GetAxis("Mouse Y");
-		Vector3 rightDirection = transform.right;  // Right direction (camera's local X axis)
-		Vector3 upDirection = transform.up;
 
-		Vector3 panMovement = rightDirection * mouseX * PanSpeed * Time.deltaTime + upDirection * mouseY * PanSpeed * Time.deltaTime;
+		Vector3 panMovement = new Vector3(mouseX * PanSpeed * Time.deltaTime, mouseY * PanSpeed * Time.deltaTime, 0);
 		this.transform.position += panMovement;
 	}
 

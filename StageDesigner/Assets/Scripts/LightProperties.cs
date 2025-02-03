@@ -8,7 +8,6 @@ using static UnityEngine.Rendering.DebugUI;
 public class LightProperties : MonoBehaviour
 {
 	public UIManager UIManager;
-	public GameObject LightPrefab;
 
 	public Light[] LightsOnPrefab;
 	public Light SelectedLight = null;
@@ -222,6 +221,7 @@ public class LightProperties : MonoBehaviour
 
 	public void UpdateSliderValues()
 	{
+		// if prefab has actual lights
 		if (LightsOnPrefab.Length >= 0 & SelectedLight != null)
 		{
 			UIManager.IntensitySlider.value = (int)SelectedLight.intensity;
@@ -244,6 +244,7 @@ public class LightProperties : MonoBehaviour
 			UIManager.RotSpeedSlider.value = (int)RotationSpeed;
 			UIManager.PulseRateSlider.value = (int)PulseRate;
 		}
+		// if prefab doesn't have any lights but has an emissive material instead
 		else if (LightMaterial != null)
 		{
 			// todo: update sliders to regulars and not ints, remove casts

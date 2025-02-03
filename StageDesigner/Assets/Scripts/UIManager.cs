@@ -145,7 +145,7 @@ public class UIManager : MonoBehaviour
 
 		VisualElement HUDRoot = HUDDoc.rootVisualElement;
 		_pauseMenuButton = HUDRoot.Q<Button>("PauseMenuButton");
-		_itemsMenuButton = HUDRoot.Q<Button>("ItemsMenuButton");
+		_itemsMenuButton = HUDRoot.Q<Button>("ItemMenuButton");
 		_pauseMenuButton.clicked += PauseMenuButtonClicked;
 		_itemsMenuButton.clicked += ItemsMenuButtonClicked;
 
@@ -538,7 +538,7 @@ public class UIManager : MonoBehaviour
 		if (buttonPressed != null)
 		{
 			Debug.Log(buttonPressed.name + " was pressed");
-			FindObjectOfType<ItemManager>().SpawnItem(buttonPressed.name);
+			FindObjectOfType<ItemManager>().SpawnItem(buttonPressed.text);
 		}
 		TogglePanelVisibility("AllOff");
 	}

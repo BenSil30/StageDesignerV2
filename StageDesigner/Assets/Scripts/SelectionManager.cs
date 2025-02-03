@@ -6,6 +6,9 @@ public class SelectionManager : MonoBehaviour
 	public GameObject SelectedObject;
 	public Camera MainCamera;
 
+	public Material SelectionMat;
+	public Material SelectedItemStorageMat;
+
 	public LightProperties CurrentLightProperties;
 
 	private void Update()
@@ -39,6 +42,9 @@ public class SelectionManager : MonoBehaviour
 			{
 				SelectedObject = hitObject;
 				UpdateSelectedLightProperties();
+
+				SelectedItemStorageMat = SelectedObject.GetComponentInChildren<Renderer>().material;
+				SelectedObject.GetComponentInChildren<Renderer>().material = SelectionMat;
 			}
 		}
 	}
@@ -49,6 +55,7 @@ public class SelectionManager : MonoBehaviour
 		{
 			Destroy(SelectedObject);
 			CurrentLightProperties = null;
+			SelectedItemStorageMat = null;
 		}
 	}
 
@@ -56,64 +63,21 @@ public class SelectionManager : MonoBehaviour
 	{
 		if (SelectedObject != null)
 		{
-			if (CurrentLightProperties != null)
-				CurrentLightProperties.RemoveListeners();
+			if (CurrentLightProperties != null) CurrentLightProperties.RemoveListeners();
+
+			SelectedObject.GetComponentInChildren<Renderer>().material = SelectedItemStorageMat;
+			SelectedItemStorageMat = null;
 			SelectedObject = null;
 		}
 	}
-
-	//private void SelectObject()
-	//{
-	//	// Create a ray from the center of the screen
-	//	Ray ray = MainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-	//	RaycastHit hit;
-
-	//	// Check if the ray hits any object
-	//	if (!Physics.Raycast(ray, out hit)) return;
-	//	// Check if the hit object is valid (e.g., has a certain tag)
-	//	if (hit.collider == null) return;
-	//	// do not allow user to select multiple objects at once
-
-	//	if (SelectedObject != null)
-	//	{
-	//		Debug.Log("Object automatically deselected");
-	//		ClearSelection();
-	//		return;
-	//	}
-
-	//	CurrentLightProperties.RemoveListeners();
-	//	// if not copy pasting
-	//	if (hit.collider.CompareTag("LightInScene"))
-	//	{
-	//		IsSpawnableObject = false;
-	//		SelectedObject = hit.collider.gameObject;
-
-	//		UpdateSelectedLightProperties();
-
-	//		Debug.Log("Selected Object: " + SelectedObject.name);
-	//		GameObject.FindObjectOfType<UIManager>().SelectedObjectTitle.text = "Selected: " + SelectedObject.name;
-	//	}
-	//	// if its a copy paste object
-	//	else if (hit.collider.CompareTag("SelectableLightingPrefab"))
-	//	{
-	//		IsSpawnableObject = true;
-	//		SelectedObject = hit.collider.gameObject;
-
-	//		Debug.Log("Selected Object: " + SelectedObject.name);
-	//		GameObject.FindObjectOfType<UIManager>().SelectedObjectTitle.text = "Selected: " + SelectedObject.name + " to spawn";
-	//	}
-	//	else
-	//	{
-	//		Debug.Log("Clicked on a non-selectable object: " + hit.collider.gameObject.name);
-	//	}
-	//}
 
 	private void UpdateSelectedLightProperties()
 	{
 		if (SelectedObject == null) return;
 		CurrentLightProperties = SelectedObject.GetComponent<LightProperties>();
 		CurrentLightProperties.CurrentLightIndex = 0;
-		CurrentLightProperties.SelectedLight = CurrentLightProperties.LightsOnPrefab[0];
+		if (CurrentLightProperties.LightsOnPrefab.Length > 0)
+			CurrentLightProperties.SelectedLight = CurrentLightProperties.LightsOnPrefab[0];
 		CurrentLightProperties.UpdateSliderValues();
 		CurrentLightProperties.AddListeners();
 	}
