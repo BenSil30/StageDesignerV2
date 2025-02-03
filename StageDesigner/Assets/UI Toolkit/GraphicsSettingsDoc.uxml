@@ -16,5 +16,6 @@
             <engine:Button text="MotionBlur" name="MotionBlurButton" style="width: 224px; justify-content: flex-end; height: 55px; font-size: 33px;" />
             <engine:Label text="On" name="MotionBlurLabel" style="font-size: 34px; color: rgb(255, 255, 255);" />
         </engine:VisualElement>
+        <engine:Button text="Back" name="BackButtonGraphics" style="width: 142px; height: 61px; font-size: 33px; align-items: center; justify-content: center; align-self: center; align-content: auto;" />
     </engine:VisualElement>
 </engine:UXML>

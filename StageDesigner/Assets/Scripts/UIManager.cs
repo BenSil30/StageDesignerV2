@@ -90,24 +90,24 @@ public class UIManager : MonoBehaviour
 	public Label SelectedObjectTitle;
 	public Button NextLightButton;
 
-	public SliderInt IntensitySlider;
+	public Slider IntensitySlider;
 
-	public SliderInt RedSlider;
-	public SliderInt GreenSlider;
-	public SliderInt BlueSlider;
+	public Slider RedSlider;
+	public Slider GreenSlider;
+	public Slider BlueSlider;
 
-	public SliderInt XPosSlider;
-	public SliderInt YPosSlider;
-	public SliderInt ZPosSlider;
+	public Slider XPosSlider;
+	public Slider YPosSlider;
+	public Slider ZPosSlider;
 
-	public SliderInt XRotSlider;
-	public SliderInt YRotSlider;
-	public SliderInt ZRotSlider;
+	public Slider XRotSlider;
+	public Slider YRotSlider;
+	public Slider ZRotSlider;
 
-	public SliderInt XScaleSlider;
+	public Slider XScaleSlider;
 
-	public SliderInt PulseRateSlider;
-	public SliderInt RotSpeedSlider;
+	public Slider PulseRateSlider;
+	public Slider RotSpeedSlider;
 
 	public Button StartStopAnimationButton;
 
@@ -130,6 +130,8 @@ public class UIManager : MonoBehaviour
 	private Label _filmGrainLabel;
 
 	private Label _motionBlurLabel;
+
+	private Button _backButtonGraphicsMenu;
 
 	public GameObject FogVolume;
 
@@ -226,32 +228,32 @@ public class UIManager : MonoBehaviour
 
 		#endregion Music Uploader UI Elements
 
-		#region Aniimation settings UI Elements
+		#region Animation settings UI Elements
 
 		VisualElement LightsAnimationRoot = LightsAnimationDoc.rootVisualElement;
 		SelectedObjectTitle = LightsAnimationRoot.Q<Label>("SelectedObject");
 		NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
 		NextLightButton.clicked += NextLightButtonHit;
 
-		IntensitySlider = LightsAnimationRoot.Q<SliderInt>("LightIntensitySlider");
+		IntensitySlider = LightsAnimationRoot.Q<Slider>("LightIntensitySlider");
 
-		RedSlider = LightsAnimationRoot.Q<SliderInt>("RedColorSlider");
-		GreenSlider = LightsAnimationRoot.Q<SliderInt>("GreenColorSlider");
-		BlueSlider = LightsAnimationRoot.Q<SliderInt>("BlueColorSlider");
+		RedSlider = LightsAnimationRoot.Q<Slider>("RedColorSlider");
+		GreenSlider = LightsAnimationRoot.Q<Slider>("GreenColorSlider");
+		BlueSlider = LightsAnimationRoot.Q<Slider>("BlueColorSlider");
 
-		XPosSlider = LightsAnimationRoot.Q<SliderInt>("XPosSlider");
-		YPosSlider = LightsAnimationRoot.Q<SliderInt>("YPosSlider");
-		ZPosSlider = LightsAnimationRoot.Q<SliderInt>("ZPosSlider");
+		XPosSlider = LightsAnimationRoot.Q<Slider>("XPosSlider");
+		YPosSlider = LightsAnimationRoot.Q<Slider>("YPosSlider");
+		ZPosSlider = LightsAnimationRoot.Q<Slider>("ZPosSlider");
 
-		XRotSlider = LightsAnimationRoot.Q<SliderInt>("XRotSlider");
-		YRotSlider = LightsAnimationRoot.Q<SliderInt>("YRotSlider");
-		ZRotSlider = LightsAnimationRoot.Q<SliderInt>("ZRotSlider");
-		//_xScaleSlider = LightsAnimationRoot.Q<SliderInt>("XScaleSlider");
-		PulseRateSlider = LightsAnimationRoot.Q<SliderInt>("PulseRateSlider");
-		RotSpeedSlider = LightsAnimationRoot.Q<SliderInt>("RotSpeedSlider");
+		XRotSlider = LightsAnimationRoot.Q<Slider>("XRotSlider");
+		YRotSlider = LightsAnimationRoot.Q<Slider>("YRotSlider");
+		ZRotSlider = LightsAnimationRoot.Q<Slider>("ZRotSlider");
+		//_xScaleSlider = LightsAnimationRoot.Q<Slider>("XScaleSlider");
+		PulseRateSlider = LightsAnimationRoot.Q<Slider>("PulseRateSlider");
+		RotSpeedSlider = LightsAnimationRoot.Q<Slider>("RotSpeedSlider");
 		StartStopAnimationButton = LightsAnimationRoot.Q<Button>("ToggleAnimationButton");
 
-		#endregion Aniimation settings UI Elements
+		#endregion Animation settings UI Elements
 
 		#region Graphics settings UI Elements
 
@@ -260,6 +262,7 @@ public class UIManager : MonoBehaviour
 		_fogToggleButton = GraphicsSettingsRoot.Q<Button>("FogButton");
 		_filmGrainToggleButton = GraphicsSettingsRoot.Q<Button>("FilmGrainButton");
 		_motionBlurButton = GraphicsSettingsRoot.Q<Button>("MotionBlurButton");
+		_backButtonGraphicsMenu = GraphicsSettingsRoot.Q<Button>("BackButtonGraphics");
 
 		_bloomLabel = GraphicsSettingsRoot.Q<Label>("BloomLabel");
 		_fogLabel = GraphicsSettingsRoot.Q<Label>("FogLabel");
@@ -270,6 +273,7 @@ public class UIManager : MonoBehaviour
 		_fogToggleButton.clicked += FogButtonClicked;
 		_filmGrainToggleButton.clicked += FilmGrainButtonClicked;
 		_motionBlurButton.clicked += MotionBlurButtonClicked;
+		_backButtonGraphicsMenu.clicked += () => TogglePanelVisibility("PauseStart");
 
 		#endregion Graphics settings UI Elements
 

@@ -224,49 +224,49 @@ public class LightProperties : MonoBehaviour
 		// if prefab has actual lights
 		if (LightsOnPrefab.Length >= 0 & SelectedLight != null)
 		{
-			UIManager.IntensitySlider.value = (int)SelectedLight.intensity;
+			UIManager.IntensitySlider.value = SelectedLight.intensity;
 
 			// todo add range value to the UI
-			//UIManager._rangeSlider.value = (int)SelectedLight.range;
+			//UIManager._rangeSlider.value = SelectedLight.range;
 
-			UIManager.RedSlider.value = (int)SelectedLight.color.r;
-			UIManager.GreenSlider.value = (int)SelectedLight.color.g;
-			UIManager.BlueSlider.value = (int)SelectedLight.color.b;
+			UIManager.RedSlider.value = SelectedLight.color.r;
+			UIManager.GreenSlider.value = SelectedLight.color.g;
+			UIManager.BlueSlider.value = SelectedLight.color.b;
 
-			UIManager.XPosSlider.value = (int)SelectedLight.transform.position.x;
-			UIManager.YPosSlider.value = (int)SelectedLight.transform.position.y;
-			UIManager.ZPosSlider.value = (int)SelectedLight.transform.position.z;
+			UIManager.XPosSlider.value = SelectedLight.transform.position.x;
+			UIManager.YPosSlider.value = SelectedLight.transform.position.y;
+			UIManager.ZPosSlider.value = SelectedLight.transform.position.z;
 
-			UIManager.XRotSlider.value = (int)SelectedLight.transform.rotation.eulerAngles.x;
-			UIManager.YRotSlider.value = (int)SelectedLight.transform.rotation.eulerAngles.y;
-			UIManager.ZRotSlider.value = (int)SelectedLight.transform.rotation.eulerAngles.z;
+			UIManager.XRotSlider.value = SelectedLight.transform.rotation.eulerAngles.x;
+			UIManager.YRotSlider.value = SelectedLight.transform.rotation.eulerAngles.y;
+			UIManager.ZRotSlider.value = SelectedLight.transform.rotation.eulerAngles.z;
 
-			UIManager.RotSpeedSlider.value = (int)RotationSpeed;
-			UIManager.PulseRateSlider.value = (int)PulseRate;
+			UIManager.RotSpeedSlider.value = RotationSpeed;
+			UIManager.PulseRateSlider.value = PulseRate;
 		}
 		// if prefab doesn't have any lights but has an emissive material instead
 		else if (LightMaterial != null)
 		{
 			// todo: update sliders to regulars and not ints, remove casts
-			UIManager.IntensitySlider.value = (int)LightMaterial.GetColor("_EmissionColor").maxColorComponent;
+			UIManager.IntensitySlider.value = LightMaterial.GetColor("_EmissionColor").maxColorComponent;
 
 			// todo add range value to the UI
-			//UIManager._rangeSlider.value = (int)SelectedLight.range;
+			//UIManager._rangeSlider.value = SelectedLight.range;
 
-			UIManager.RedSlider.value = (int)LightMaterial.GetColor("_EmissionColor").r;
-			UIManager.GreenSlider.value = (int)LightMaterial.GetColor("_EmissionColor").g;
-			UIManager.BlueSlider.value = (int)LightMaterial.GetColor("_EmissionColor").b;
+			UIManager.RedSlider.value = LightMaterial.GetColor("_EmissionColor").r;
+			UIManager.GreenSlider.value = LightMaterial.GetColor("_EmissionColor").g;
+			UIManager.BlueSlider.value = LightMaterial.GetColor("_EmissionColor").b;
 
-			UIManager.XPosSlider.value = (int)transform.position.x;
-			UIManager.YPosSlider.value = (int)transform.position.y;
-			UIManager.ZPosSlider.value = (int)transform.position.z;
+			UIManager.XPosSlider.value = transform.position.x;
+			UIManager.YPosSlider.value = transform.position.y;
+			UIManager.ZPosSlider.value = transform.position.z;
 
-			UIManager.XRotSlider.value = (int)transform.rotation.eulerAngles.x;
-			UIManager.YRotSlider.value = (int)transform.rotation.eulerAngles.y;
-			UIManager.ZRotSlider.value = (int)transform.rotation.eulerAngles.z;
+			UIManager.XRotSlider.value = transform.rotation.eulerAngles.x;
+			UIManager.YRotSlider.value = transform.rotation.eulerAngles.y;
+			UIManager.ZRotSlider.value = transform.rotation.eulerAngles.z;
 
-			UIManager.RotSpeedSlider.value = (int)RotationSpeed;
-			UIManager.PulseRateSlider.value = (int)PulseRate;
+			UIManager.RotSpeedSlider.value = RotationSpeed;
+			UIManager.PulseRateSlider.value = PulseRate;
 		}
 	}
 }
