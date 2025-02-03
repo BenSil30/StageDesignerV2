@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
 
 	private Button _pauseMenuButton;
 	private Button _itemsMenuButton;
+	private Button _musicMenuButton;
 
 	#endregion HUD UI Elements
 
@@ -146,8 +147,10 @@ public class UIManager : MonoBehaviour
 		VisualElement HUDRoot = HUDDoc.rootVisualElement;
 		_pauseMenuButton = HUDRoot.Q<Button>("PauseMenuButton");
 		_itemsMenuButton = HUDRoot.Q<Button>("ItemMenuButton");
-		_pauseMenuButton.clicked += PauseMenuButtonClicked;
-		_itemsMenuButton.clicked += ItemsMenuButtonClicked;
+		_musicMenuButton = HUDRoot.Q<Button>("MusicMenuButton");
+		_pauseMenuButton.clicked += () => TogglePanelVisibility("PauseStart");
+		_itemsMenuButton.clicked += () => TogglePanelVisibility("ItemsPanel");
+		_musicMenuButton.clicked += () => TogglePanelVisibility("MusicUploader");
 
 		#endregion HUD UI elements
 
@@ -165,7 +168,7 @@ public class UIManager : MonoBehaviour
 		_item7Button = ItemsPanelRoot.Q<Button>("Item7Button");
 		_item8Button = ItemsPanelRoot.Q<Button>("Item8Button");
 
-		_backButtonItems.clicked += BackButtonItemsPanelClicked;
+		_backButtonItems.clicked += () => TogglePanelVisibility("AllOff");
 		_item0Button.clicked += () => ItemSelectedFromPanel(_item0Button);
 		_item1Button.clicked += () => ItemSelectedFromPanel(_item1Button);
 		_item2Button.clicked += () => ItemSelectedFromPanel(_item2Button);
@@ -187,9 +190,9 @@ public class UIManager : MonoBehaviour
 		_graphicsSettignsButtonP = PauseStartRoot.Q<Button>("GraphicsSettingsButton");
 
 		_startResumeButtonP.clicked += StartResumeClicked;
-		_goToStageP.clicked += GoToStageClicked;
+		_goToStageP.clicked += () => TogglePanelVisibility("StageSelection"); ;
 		_exportButtonP.clicked += ExportClicked;
-		_graphicsSettignsButtonP.clicked += GraphicsSettingsButtonClicked;
+		_graphicsSettignsButtonP.clicked += () => TogglePanelVisibility("GraphicsSettings");
 
 		#endregion Pause/Start UI Elements
 
@@ -204,7 +207,7 @@ public class UIManager : MonoBehaviour
 		_defaultStageButton.clicked += DefaultStageClicked;
 		_paramountStageButton.clicked += ParamountStageClicked;
 		_ogdenStageButton.clicked += OgdenStageClicked;
-		_backButton.clicked += BackClicked;
+		_backButton.clicked += () => TogglePanelVisibility("PauseStart"); ;
 
 		#endregion Stage Selection UI Elements
 
@@ -275,11 +278,6 @@ public class UIManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.M))
-		{
-			TogglePanelVisibility("MusicUploader");
-		}
-
 		if (Input.GetKeyDown(KeyCode.R))
 		{
 			TogglePanelVisibility("LightsAnimation");
@@ -512,26 +510,7 @@ public class UIManager : MonoBehaviour
 		sm.CurrentLightProperties.UpdateSliderValues();
 	}
 
-	#region HUD Methods
-
-	private void PauseMenuButtonClicked()
-	{
-		TogglePanelVisibility("PauseStart");
-	}
-
-	private void ItemsMenuButtonClicked()
-	{
-		TogglePanelVisibility("ItemsPanel");
-	}
-
-	#endregion HUD Methods
-
 	#region Items Methods
-
-	private void BackButtonItemsPanelClicked()
-	{
-		TogglePanelVisibility("AllOff");
-	}
 
 	private void ItemSelectedFromPanel(Button buttonPressed)
 	{
@@ -554,19 +533,9 @@ public class UIManager : MonoBehaviour
 		TogglePanelVisibility("AllOff");
 	}
 
-	private void GoToStageClicked()
-	{
-		TogglePanelVisibility("StageSelection");
-	}
-
 	private void ExportClicked()
 	{
 		// todo export stuff lmao
-	}
-
-	private void GraphicsSettingsButtonClicked()
-	{
-		TogglePanelVisibility("GraphicsSettings");
 	}
 
 	#endregion PauseStart Methods
@@ -595,11 +564,6 @@ public class UIManager : MonoBehaviour
 		TogglePanelVisibility("AllOff");
 		FindObjectOfType<StageManager>().SwitchStage("AllOff");
 		FindObjectOfType<StageManager>().SwitchStage("Ogden");
-	}
-
-	private void BackClicked()
-	{
-		TogglePanelVisibility("PauseStart");
 	}
 
 	#endregion StageSelection Methods

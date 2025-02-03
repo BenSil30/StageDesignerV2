@@ -2,5 +2,6 @@
     <engine:VisualElement name="Root" style="flex-grow: 1;">
         <engine:Button text="Pause" name="PauseMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
         <engine:Button text="Items" name="ItemMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+        <engine:Button text="Music" name="MusicMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
     </engine:VisualElement>
 </engine:UXML>
