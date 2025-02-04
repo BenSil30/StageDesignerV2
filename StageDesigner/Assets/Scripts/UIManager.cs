@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
 	private Button _pauseMenuButton;
 	private Button _itemsMenuButton;
 	private Button _musicMenuButton;
+	private Button _lightsMenuButton;
 
 	#endregion HUD UI Elements
 
@@ -150,9 +151,12 @@ public class UIManager : MonoBehaviour
 		_pauseMenuButton = HUDRoot.Q<Button>("PauseMenuButton");
 		_itemsMenuButton = HUDRoot.Q<Button>("ItemMenuButton");
 		_musicMenuButton = HUDRoot.Q<Button>("MusicMenuButton");
+		_lightsMenuButton = HUDRoot.Q<Button>("LightsMenuButton");
+
 		_pauseMenuButton.clicked += () => TogglePanelVisibility("PauseStart");
 		_itemsMenuButton.clicked += () => TogglePanelVisibility("ItemsPanel");
 		_musicMenuButton.clicked += () => TogglePanelVisibility("MusicUploader");
+		_lightsMenuButton.clicked += () => TogglePanelVisibility("LightsAnimation");
 
 		#endregion HUD UI elements
 
@@ -282,10 +286,6 @@ public class UIManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-			TogglePanelVisibility("LightsAnimation");
-		}
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			TogglePanelVisibility("AllOff");

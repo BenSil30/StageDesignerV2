@@ -85,11 +85,21 @@ public class CameraController : MonoBehaviour
 	{
 		_isPanning = true;
 
+		// Get the horizontal and vertical mouse movement
 		float mouseX = Input.GetAxis("Mouse X");
-		float mouseY = -Input.GetAxis("Mouse Y");
+		float mouseY = Input.GetAxis("Mouse Y");
 
+		// Get the camera's local right and up axes to move in the camera's local space
+		Vector3 right = transform.right;  // Local X axis
+		Vector3 up = transform.up;        // Local Y axis
+
+		// Calculate the movement vector based on the mouse input
 		Vector3 panMovement = new Vector3(mouseX * PanSpeed * Time.deltaTime, mouseY * PanSpeed * Time.deltaTime, 0);
+		Debug.Log(panMovement);
+
+		// Apply the calculated movement to the camera's position
 		this.transform.position += panMovement;
+		Debug.Log("Camera Position: " + transform.position);
 	}
 
 	private void HandleRotation()

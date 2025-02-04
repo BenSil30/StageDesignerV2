@@ -87,7 +87,7 @@ public class LightProperties : MonoBehaviour
 		UIManager.StartStopAnimationButton.clicked -= StartStopAnimation;
 	}
 
-	private void IntensityUpdated(ChangeEvent<int> evt)
+	private void IntensityUpdated(ChangeEvent<float> evt)
 	{
 		if (SelectedLight != null)
 		{
@@ -100,7 +100,7 @@ public class LightProperties : MonoBehaviour
 		}
 	}
 
-	private void LightColorUpdated(ChangeEvent<int> evt)
+	private void LightColorUpdated(ChangeEvent<float> evt)
 	{
 		if (SelectedLight != null)
 		{
@@ -114,23 +114,23 @@ public class LightProperties : MonoBehaviour
 		}
 	}
 
-	private void LightPositionUpdated(ChangeEvent<int> evt)
+	private void LightPositionUpdated(ChangeEvent<float> evt)
 	{
 		Vector3 newPosition = new Vector3(UIManager.XPosSlider.value, UIManager.YPosSlider.value, UIManager.ZPosSlider.value);
 		transform.position = newPosition;
 	}
 
-	private void LightRotationUpdated(ChangeEvent<int> evt)
+	private void LightRotationUpdated(ChangeEvent<float> evt)
 	{
 		Vector3 newRotation = new Vector3(UIManager.XRotSlider.value, UIManager.YRotSlider.value, UIManager.ZRotSlider.value);
 		transform.rotation = Quaternion.Euler(newRotation);
 	}
 
-	private void RotationSpeedUpdated(ChangeEvent<int> evt)
+	private void RotationSpeedUpdated(ChangeEvent<float> evt)
 	{
 	}
 
-	private void PulseRateUpdated(ChangeEvent<int> evt)
+	private void PulseRateUpdated(ChangeEvent<float> evt)
 	{
 		PulseRate = evt.newValue;
 	}
