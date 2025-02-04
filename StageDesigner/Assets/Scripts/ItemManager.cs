@@ -7,14 +7,6 @@ public class ItemManager : MonoBehaviour
 	public List<GameObject> SpawnedItems = new List<GameObject>();
 	public GameObject SpawnPoint;
 
-	private void Start()
-	{
-	}
-
-	private void Update()
-	{
-	}
-
 	// todo: check deletion - needs to delete object, clear current light properties and remove from the list of lights
 	public void SpawnItem(string itemName)
 	{

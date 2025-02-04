@@ -8,14 +8,6 @@
         <engine:Slider label="Red" value="42" high-value="255" name="RedColorSlider" show-input-field="true" fill="false" style="width: 500px; color: rgb(255, 255, 255);" />
         <engine:Slider label="Green" value="42" high-value="255" name="GreenColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
         <engine:Slider label="Blue" value="42" high-value="255" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Label text="Position" name="PosTitle" style="font-size: 20px; width: auto; color: rgb(255, 255, 255);" />
-        <engine:Slider label="X Pos" value="42" high-value="30" name="XPosSlider" low-value="-30" show-input-field="true" style="width: 500px; height: 36px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Y Pos" value="42" high-value="30" name="YPosSlider" low-value="-30" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Z Pos" value="42" high-value="30" name="ZPosSlider" low-value="-30" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Label text="Rotation" name="RotTitle" style="font-size: 20px;" />
-        <engine:Slider label="X Rot" value="42" high-value="360" name="XRotSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Y Rot" value="42" high-value="360" name="YRotSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Z Rot" value="42" high-value="360" name="ZRotSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
         <engine:Slider label="Pulse Rate" value="42" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
         <engine:Slider label="Rot Speed" value="42" high-value="100" name="RotSpeedSlider" style="width: 500px; color: rgb(255, 255, 255);" />
         <engine:Button text="Start/Stop" name="ToggleAnimationButton" style="font-size: 24px;" />

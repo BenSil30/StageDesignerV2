@@ -97,14 +97,6 @@ public class UIManager : MonoBehaviour
 	public Slider GreenSlider;
 	public Slider BlueSlider;
 
-	public Slider XPosSlider;
-	public Slider YPosSlider;
-	public Slider ZPosSlider;
-
-	public Slider XRotSlider;
-	public Slider YRotSlider;
-	public Slider ZRotSlider;
-
 	public Slider XScaleSlider;
 
 	public Slider PulseRateSlider;
@@ -245,13 +237,6 @@ public class UIManager : MonoBehaviour
 		GreenSlider = LightsAnimationRoot.Q<Slider>("GreenColorSlider");
 		BlueSlider = LightsAnimationRoot.Q<Slider>("BlueColorSlider");
 
-		XPosSlider = LightsAnimationRoot.Q<Slider>("XPosSlider");
-		YPosSlider = LightsAnimationRoot.Q<Slider>("YPosSlider");
-		ZPosSlider = LightsAnimationRoot.Q<Slider>("ZPosSlider");
-
-		XRotSlider = LightsAnimationRoot.Q<Slider>("XRotSlider");
-		YRotSlider = LightsAnimationRoot.Q<Slider>("YRotSlider");
-		ZRotSlider = LightsAnimationRoot.Q<Slider>("ZRotSlider");
 		//_xScaleSlider = LightsAnimationRoot.Q<Slider>("XScaleSlider");
 		PulseRateSlider = LightsAnimationRoot.Q<Slider>("PulseRateSlider");
 		RotSpeedSlider = LightsAnimationRoot.Q<Slider>("RotSpeedSlider");

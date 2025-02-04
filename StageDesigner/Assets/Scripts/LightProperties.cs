@@ -51,14 +51,6 @@ public class LightProperties : MonoBehaviour
 		UIManager.GreenSlider.RegisterValueChangedCallback(LightColorUpdated);
 		UIManager.BlueSlider.RegisterValueChangedCallback(LightColorUpdated);
 
-		UIManager.XPosSlider.RegisterValueChangedCallback(LightPositionUpdated);
-		UIManager.YPosSlider.RegisterValueChangedCallback(LightPositionUpdated);
-		UIManager.ZPosSlider.RegisterValueChangedCallback(LightPositionUpdated);
-
-		UIManager.XRotSlider.RegisterValueChangedCallback(LightRotationUpdated);
-		UIManager.YRotSlider.RegisterValueChangedCallback(LightRotationUpdated);
-		UIManager.ZRotSlider.RegisterValueChangedCallback(LightRotationUpdated);
-
 		UIManager.RotSpeedSlider.RegisterValueChangedCallback(RotationSpeedUpdated);
 		UIManager.PulseRateSlider.RegisterValueChangedCallback(PulseRateUpdated);
 
@@ -72,14 +64,6 @@ public class LightProperties : MonoBehaviour
 		UIManager.RedSlider.UnregisterValueChangedCallback(LightColorUpdated);
 		UIManager.GreenSlider.UnregisterValueChangedCallback(LightColorUpdated);
 		UIManager.BlueSlider.UnregisterValueChangedCallback(LightColorUpdated);
-
-		UIManager.XPosSlider.UnregisterValueChangedCallback(LightPositionUpdated);
-		UIManager.YPosSlider.UnregisterValueChangedCallback(LightPositionUpdated);
-		UIManager.ZPosSlider.UnregisterValueChangedCallback(LightPositionUpdated);
-
-		UIManager.XRotSlider.UnregisterValueChangedCallback(LightRotationUpdated);
-		UIManager.YRotSlider.UnregisterValueChangedCallback(LightRotationUpdated);
-		UIManager.ZRotSlider.UnregisterValueChangedCallback(LightRotationUpdated);
 
 		UIManager.RotSpeedSlider.UnregisterValueChangedCallback(RotationSpeedUpdated);
 		UIManager.PulseRateSlider.UnregisterValueChangedCallback(PulseRateUpdated);
@@ -112,18 +96,6 @@ public class LightProperties : MonoBehaviour
 			Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value) * UIManager.IntensitySlider.value;
 			LightMaterial.SetColor("_EmissionColor", lightColor);
 		}
-	}
-
-	private void LightPositionUpdated(ChangeEvent<float> evt)
-	{
-		Vector3 newPosition = new Vector3(UIManager.XPosSlider.value, UIManager.YPosSlider.value, UIManager.ZPosSlider.value);
-		transform.position = newPosition;
-	}
-
-	private void LightRotationUpdated(ChangeEvent<float> evt)
-	{
-		Vector3 newRotation = new Vector3(UIManager.XRotSlider.value, UIManager.YRotSlider.value, UIManager.ZRotSlider.value);
-		transform.rotation = Quaternion.Euler(newRotation);
 	}
 
 	private void RotationSpeedUpdated(ChangeEvent<float> evt)
@@ -233,14 +205,6 @@ public class LightProperties : MonoBehaviour
 			UIManager.GreenSlider.value = SelectedLight.color.g;
 			UIManager.BlueSlider.value = SelectedLight.color.b;
 
-			UIManager.XPosSlider.value = SelectedLight.transform.position.x;
-			UIManager.YPosSlider.value = SelectedLight.transform.position.y;
-			UIManager.ZPosSlider.value = SelectedLight.transform.position.z;
-
-			UIManager.XRotSlider.value = SelectedLight.transform.rotation.eulerAngles.x;
-			UIManager.YRotSlider.value = SelectedLight.transform.rotation.eulerAngles.y;
-			UIManager.ZRotSlider.value = SelectedLight.transform.rotation.eulerAngles.z;
-
 			UIManager.RotSpeedSlider.value = RotationSpeed;
 			UIManager.PulseRateSlider.value = PulseRate;
 		}
@@ -256,14 +220,6 @@ public class LightProperties : MonoBehaviour
 			UIManager.RedSlider.value = LightMaterial.GetColor("_EmissionColor").r;
 			UIManager.GreenSlider.value = LightMaterial.GetColor("_EmissionColor").g;
 			UIManager.BlueSlider.value = LightMaterial.GetColor("_EmissionColor").b;
-
-			UIManager.XPosSlider.value = transform.position.x;
-			UIManager.YPosSlider.value = transform.position.y;
-			UIManager.ZPosSlider.value = transform.position.z;
-
-			UIManager.XRotSlider.value = transform.rotation.eulerAngles.x;
-			UIManager.YRotSlider.value = transform.rotation.eulerAngles.y;
-			UIManager.ZRotSlider.value = transform.rotation.eulerAngles.z;
 
 			UIManager.RotSpeedSlider.value = RotationSpeed;
 			UIManager.PulseRateSlider.value = PulseRate;
