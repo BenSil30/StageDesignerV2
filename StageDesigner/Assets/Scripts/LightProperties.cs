@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
+using Button = UnityEngine.UIElements.Button;
 
 public class LightProperties : MonoBehaviour
 {
@@ -90,6 +91,12 @@ public class LightProperties : MonoBehaviour
 			KeyframesOnPrefab.Add(newKeyframe);
 			KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 		}
+		UIManager um = FindFirstObjectByType<UIManager>();
+		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
+		Button keyframeButton = root.Q<Button>("AddKeyframeButton");
+
+		// turn the background of the button a light orange
+		keyframeButton.style.backgroundColor = new StyleColor(new Color(188f, 188f, 188f, 1f));
 		// log with all keyframe added info
 		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {SelectedLight.intensity} - Color: {SelectedLight.color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
 	}
@@ -113,7 +120,7 @@ public class LightProperties : MonoBehaviour
 	public void UpdateKeyframes()
 	{
 		if (KeyframesOnPrefab.Count < 0) return;
-		float currentTime = FindFirstObjectByType<UIManager>()._musicProgressSlider.value;
+		float currentTime = FindFirstObjectByType<UIManager>().TimelineSlider.value;
 		KeyframeClass currentKeyframe = null;
 		KeyframeClass nextKeyframe = null;
 
@@ -175,6 +182,7 @@ public class LightProperties : MonoBehaviour
 	public void AddListeners()
 	{
 		UIManager.IntensitySlider.RegisterValueChangedCallback(IntensityUpdated);
+		// when intensity is changed, call notify of value change
 
 		UIManager.RedSlider.RegisterValueChangedCallback(LightColorUpdated);
 		UIManager.GreenSlider.RegisterValueChangedCallback(LightColorUpdated);
@@ -200,6 +208,17 @@ public class LightProperties : MonoBehaviour
 		UIManager.AddKeyframeAnimationButton.clicked -= StartStopAnimation;
 	}
 
+	// todo: still needs to notify when position or rotation are changed
+	public void NotifyOfValueChange()
+	{
+		UIManager um = FindFirstObjectByType<UIManager>();
+		um.ShowKeyframeToasts("Value Changed", 1f);
+		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
+		Button keyframeButton = root.Q<Button>("AddKeyframeAnimationPanelButton");
+		// turn the background of the button a light orange
+		keyframeButton.style.backgroundColor = new StyleColor(new Color(238f, 119f, 43f, 1f));
+	}
+
 	public void IntensityUpdated(ChangeEvent<float> evt)
 	{
 		if (SelectedLight != null)
@@ -211,6 +230,7 @@ public class LightProperties : MonoBehaviour
 			Color finalColor = LightMaterial.GetColor("_EmissionColor") * (evt.newValue * 8);
 			LightMaterial.SetColor("_EmissionColor", finalColor);
 		}
+		NotifyOfValueChange();
 	}
 
 	public void LightColorUpdated(ChangeEvent<float> evt)
@@ -225,16 +245,19 @@ public class LightProperties : MonoBehaviour
 			Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value) * UIManager.IntensitySlider.value;
 			LightMaterial.SetColor("_EmissionColor", lightColor);
 		}
+		NotifyOfValueChange();
 	}
 
 	public void RotationSpeedUpdated(ChangeEvent<float> evt)
 	{
 		RotationSpeed = evt.newValue;
+		NotifyOfValueChange();
 	}
 
 	public void PulseRateUpdated(ChangeEvent<float> evt)
 	{
 		PulseRate = evt.newValue;
+		NotifyOfValueChange();
 	}
 
 	public void StrobeLight()

@@ -132,7 +132,7 @@ public class ItemManager : MonoBehaviour
 
 		if (FindFirstObjectByType<AudioSource>().clip != null)
 		{
-			FindFirstObjectByType<UIManager>()._musicProgressSlider.highValue = songLength;
+			FindFirstObjectByType<UIManager>().TimelineSlider.highValue = songLength;
 		}
 
 		Debug.Log("Keyframes imported successfully!");
