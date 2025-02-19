@@ -394,13 +394,57 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
+	#region Keyframe Methods
+
 	private void AddKeyframeClicked()
 	{
 		if (sm.SelectedObject != null)
 		{
 			sm.CurrentLightProperties.AddKeyframe(_musicProgressSlider.value);
 		}
+		ShowKeyframeToasts("Keyframe Added", 1f);
 		RefreshKeyframeList();
+	}
+
+	public void ShowKeyframeToasts(string msg, float duration)
+	{
+		Label toastLabel = new Label(msg);
+		VisualElement root = HUDDoc.rootVisualElement;
+		toastLabel.style.position = Position.Absolute;
+		toastLabel.style.top = 20;
+		toastLabel.style.left = 50;
+		toastLabel.style.paddingLeft = 10;
+		toastLabel.style.paddingRight = 10;
+		toastLabel.style.backgroundColor = new Color(0, 0, 0, 0.8f);
+		toastLabel.style.color = Color.white;
+		toastLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+		toastLabel.style.fontSize = 30;
+		toastLabel.style.opacity = 1;
+		toastLabel.style.borderBottomLeftRadius = 5;
+		toastLabel.style.borderBottomRightRadius = 5;
+		toastLabel.style.borderTopLeftRadius = 5;
+		toastLabel.style.borderTopRightRadius = 5;
+		toastLabel.style.paddingTop = 5;
+		toastLabel.style.paddingBottom = 5;
+
+		root.Add(toastLabel);
+		StartCoroutine(FadeOutAndRemove(toastLabel, duration, root));
+	}
+
+	private IEnumerator FadeOutAndRemove(Label toastLabel, float duration, VisualElement root)
+	{
+		yield return new WaitForSeconds(duration);
+
+		float fadeTime = 0.5f;
+		float elapsedTime = 0;
+		while (elapsedTime < fadeTime)
+		{
+			elapsedTime += Time.deltaTime;
+			toastLabel.style.opacity = 1 - (elapsedTime / fadeTime);
+			yield return null;
+		}
+
+		root.Remove(toastLabel);
 	}
 
 	public void RefreshKeyframeList()
@@ -443,6 +487,7 @@ public class UIManager : MonoBehaviour
 		{
 			sm.CurrentLightProperties.DeleteKeyframe(time);
 		}
+		ShowKeyframeToasts($"Keyframe Deleted at {time}", 1f);
 		RefreshKeyframeList();
 	}
 
@@ -452,6 +497,8 @@ public class UIManager : MonoBehaviour
 		_musicProgressSlider.value = time;
 		sm.CurrentLightProperties.UpdateKeyframes();
 	}
+
+	#endregion Keyframe Methods
 
 	public void TogglePanelVisibility(string panelName)
 	{
@@ -729,13 +776,10 @@ public class UIManager : MonoBehaviour
 
 	#region Items Methods
 
-	private void ItemSelectedFromPanel(Button buttonPressed)
+	private void ItemSelectedFromPanel(string name)
 	{
-		if (buttonPressed != null)
-		{
-			Debug.Log(buttonPressed.name + " was pressed");
-			FindFirstObjectByType<ItemManager>().SpawnItem(buttonPressed.text);
-		}
+		Debug.Log(name + " was pressed");
+		FindFirstObjectByType<ItemManager>().SpawnItem(name);
 		TogglePanelVisibility("AllOff");
 	}
 

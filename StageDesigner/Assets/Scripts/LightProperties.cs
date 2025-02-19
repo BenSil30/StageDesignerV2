@@ -99,7 +99,7 @@ public class LightProperties : MonoBehaviour
 		KeyframeClass keyframeToUpdate = KeyframesOnPrefab.Find(x => x.KeyframeTime == time);
 		DeleteKeyframe(time);
 		AddKeyframe(time);
-
+		FindFirstObjectByType<UIManager>().ShowKeyframeToasts("Keyframe Updated", 1f);
 		KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 	}
 
