@@ -29,10 +29,15 @@ public class UIManager : MonoBehaviour
 
 	#region HUD UI Elements
 
+	private VisualElement _musicHudRoot;
 	private Button _pauseMenuButton;
 	private Button _itemsMenuButton;
 	private Button _musicMenuButton;
 	private Button _lightsMenuButton;
+	private Button _playPauseMusicHUDButton;
+
+	private Slider _musicProgressSlider;
+	private Label _musicDurationLabel;
 
 	#endregion HUD UI Elements
 
@@ -76,9 +81,7 @@ public class UIManager : MonoBehaviour
 	private Button _importButton;
 
 	private Label _songTitleLabel;
-	private Button _playPauseButton;
 	private Button _restartButton;
-	private Slider _scrubberSlider;
 
 	public AudioSource AudioSource;
 	public AudioClip AudioClip;
@@ -140,15 +143,27 @@ public class UIManager : MonoBehaviour
 		#region HUD UI elements
 
 		VisualElement HUDRoot = HUDDoc.rootVisualElement;
+		_musicHudRoot = HUDRoot.Q<VisualElement>("MusicHudRoot");
 		_pauseMenuButton = HUDRoot.Q<Button>("PauseMenuButton");
 		_itemsMenuButton = HUDRoot.Q<Button>("ItemMenuButton");
 		_musicMenuButton = HUDRoot.Q<Button>("MusicMenuButton");
 		_lightsMenuButton = HUDRoot.Q<Button>("LightsMenuButton");
+		_playPauseMusicHUDButton = HUDRoot.Q<Button>("PlayPauseMusicHudButton");
+		_musicProgressSlider = HUDDoc.rootVisualElement.Q<Slider>("SongProgressSliderHud");
+		_musicDurationLabel = HUDDoc.rootVisualElement.Q<Label>("SongDurationIndicatorHud");
 
 		_pauseMenuButton.clicked += () => TogglePanelVisibility("PauseStart");
 		_itemsMenuButton.clicked += () => TogglePanelVisibility("ItemsPanel");
 		_musicMenuButton.clicked += () => TogglePanelVisibility("MusicUploader");
 		_lightsMenuButton.clicked += () => TogglePanelVisibility("LightsAnimation");
+		_playPauseMusicHUDButton.clicked += PlayPauseMusicClicked;
+		_musicProgressSlider.RegisterValueChangedCallback(evt =>
+		{
+			if (AudioSource.clip != null)
+			{
+				AudioSource.time = evt.newValue;
+			}
+		});
 
 		#endregion HUD UI elements
 
@@ -214,12 +229,9 @@ public class UIManager : MonoBehaviour
 		VisualElement MusicUploaderRoot = MusicUploaderDoc.rootVisualElement;
 		_importButton = MusicUploaderRoot.Q<Button>("UploadButton");
 		_songTitleLabel = MusicUploaderRoot.Q<Label>("SongTitle");
-		_playPauseButton = MusicUploaderRoot.Q<Button>("PlayPauseButton");
 		_restartButton = MusicUploaderRoot.Q<Button>("RestartButton");
-		_scrubberSlider = MusicUploaderRoot.Q<Slider>("ScrubberSlider");
 
 		_importButton.clicked += ImportClicked;
-		_playPauseButton.clicked += PlayPauseMusicClicked;
 		_restartButton.clicked += RestartMusicClicked;
 
 		#endregion Music Uploader UI Elements
@@ -276,10 +288,20 @@ public class UIManager : MonoBehaviour
 			TogglePanelVisibility("AllOff");
 		}
 
-		// update scrubber slider
-		if (MusicUploaderVisible && MusicIsPlaying)
+		if (AudioSource.clip == null)
 		{
-			if (AudioSource.clip != null) _scrubberSlider.value = AudioSource.time;
+			_musicHudRoot.style.visibility = Visibility.Hidden;
+			_musicHudRoot.focusable = false;
+		}
+		// update scrubber slider
+		if (AudioSource.clip != null)
+		{
+			_musicHudRoot.style.visibility = Visibility.Visible;
+			_musicHudRoot.focusable = true;
+			if (MusicIsPlaying)
+			{
+				_musicProgressSlider.value = AudioSource.time;
+			}
 		}
 	}
 
@@ -597,7 +619,8 @@ public class UIManager : MonoBehaviour
 					AudioClip = clip;
 					//audioSource.Play();
 					_songTitleLabel.text = "Selected: " + Path.GetFileName(path);
-					_scrubberSlider.highValue = clip.length;
+					_musicProgressSlider.highValue = clip.length;
+					_musicDurationLabel.text = clip.length.ToString();
 				}
 				else
 				{
@@ -634,7 +657,7 @@ public class UIManager : MonoBehaviour
 		{
 			AudioSource.Stop();
 			AudioSource.Play();
-			_scrubberSlider.value = 0;
+			_musicProgressSlider.value = 0;
 		}
 	}
 

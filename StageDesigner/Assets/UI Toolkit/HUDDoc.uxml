@@ -1,8 +1,16 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:VisualElement name="Root" style="flex-grow: 1;">
-        <engine:Button text="Pause" name="PauseMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
-        <engine:Button text="Items" name="ItemMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
-        <engine:Button text="Music" name="MusicMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
-        <engine:Button text="Animation" name="LightsMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+        <engine:VisualElement style="flex-grow: 1; height: 90%;">
+            <engine:Button text="Pause" name="PauseMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+            <engine:Button text="Items" name="ItemMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+            <engine:Button text="Music" name="MusicMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+            <engine:Button text="Animation" name="LightsMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="MusicHudRoot" style="flex-grow: 1; flex-direction: row; flex-shrink: 0; align-items: center; justify-content: center; margin-left: 10px; margin-right: 10px; margin-bottom: 10px;">
+            <engine:Button text="⏯️" name="PlayPauseMusicHudButton" style="font-size: 25px;" />
+            <engine:Label text="0:00" style="align-items: center; justify-content: flex-end; -unity-text-align: middle-center; color: rgb(255, 255, 255);" />
+            <engine:Slider value="42" high-value="100" fill="true" show-input-field="true" name="SongProgressSliderHud" style="flex-grow: 1; flex-shrink: 1; height: 45px;" />
+            <engine:Label name="SongDurationIndicatorHud" style="-unity-text-align: middle-center; color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

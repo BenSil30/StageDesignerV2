@@ -7,6 +7,5 @@
         </engine:VisualElement>
         <engine:Button text="Play/Pause" name="PlayPauseButton" style="width: 145px;" />
         <engine:Button text="Restart Song" name="RestartButton" style="width: 145px;" />
-        <engine:Slider label="Scrubber" value="42" high-value="100" name="ScrubberSlider" fill="true" show-input-field="false" style="height: 35px; width: 508px;" />
     </engine:VisualElement>
 </engine:UXML>

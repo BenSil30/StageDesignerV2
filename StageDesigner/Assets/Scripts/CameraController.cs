@@ -15,6 +15,7 @@ public class CameraController : MonoBehaviour
 	private Vector2 rotationVelocity;
 	private float targetDist;
 	private float zoomVelocity;
+	private Vector3 panOffset = Vector3.zero; // Offset for panning
 	private bool _isRotating = false;
 	private bool _isZooming = false;
 	private bool _isPanning = false;
@@ -57,9 +58,10 @@ public class CameraController : MonoBehaviour
 		// Smooth zoom
 		Dist = Mathf.SmoothDamp(Dist, targetDist, ref zoomVelocity, SmoothTime);
 
+		// Apply final camera transformation
 		ApplyCameraTransformation();
 
-		// Stop rotating or zooming when Shift or Mouse Button is released
+		// Stop rotating, zooming, or panning when input stops
 		if (Input.GetKeyUp(KeyCode.LeftShift))
 		{
 			_isRotating = false;
@@ -85,43 +87,32 @@ public class CameraController : MonoBehaviour
 	{
 		_isPanning = true;
 
-		// Get the horizontal and vertical mouse movement
 		float mouseX = Input.GetAxis("Mouse X");
 		float mouseY = Input.GetAxis("Mouse Y");
 
-		// Get the camera's local right and up axes to move in the camera's local space
-		Vector3 right = transform.right;  // Local X axis
-		Vector3 up = transform.up;        // Local Y axis
-
-		// Calculate the movement vector based on the mouse input
-		Vector3 panMovement = new Vector3(mouseX * PanSpeed * Time.deltaTime, mouseY * PanSpeed * Time.deltaTime, 0);
-		Debug.Log(panMovement);
-
-		// Apply the calculated movement to the camera's position
-		this.transform.position += panMovement;
-		Debug.Log("Camera Position: " + transform.position);
+		// Move the camera along its local right and up vectors
+		Vector3 right = transform.right;
+		Vector3 up = transform.up;
+		panOffset -= (right * mouseX + up * mouseY) * PanSpeed * Time.deltaTime;
 	}
 
 	private void HandleRotation()
 	{
-		if (!_isRotating) // Only set target when the rotation starts
-		{
-			// Set the target to the object at the center of the camera view
-			Ray objectRay = GetComponent<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-			RaycastHit objectHit;
-			if (Physics.Raycast(objectRay, out objectHit))
-			{
-				CameraTarget = objectHit.transform;
-			}
-			else
-			{
-				CameraTarget = DefaultCameraTarget;
-			}
-		}
+		//if (!_isRotating) // Only set target when rotation starts
+		//{
+		//	Ray objectRay = GetComponent<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+		//	if (Physics.Raycast(objectRay, out RaycastHit objectHit))
+		//	{
+		//		CameraTarget = objectHit.transform;
+		//	}
+		//	else
+		//	{
+		//		CameraTarget = DefaultCameraTarget;
+		//	}
+		//}
 
 		_isRotating = true;
 
-		// Apply rotation logic
 		float mouseX = -Input.GetAxis("Mouse X");
 		float mouseY = -Input.GetAxis("Mouse Y");
 
@@ -134,21 +125,21 @@ public class CameraController : MonoBehaviour
 	{
 		_isZooming = true;
 
-		// Adjust zoom based on vertical mouse movement
 		float mouseY = Input.GetAxis("Mouse Y");
 		if (mouseY != 0)
 		{
-			targetDist -= mouseY * ZoomSpeed * 0.1f;  // Use vertical mouse movement for zoom
+			targetDist -= mouseY * ZoomSpeed * 0.1f;
 		}
 	}
 
 	private void ApplyCameraTransformation()
 	{
-		// Smooth rotation
+		// Calculate rotation
 		Quaternion rotationQuat = Quaternion.Euler(rotation.y, rotation.x, 0);
 		Vector3 offset = rotationQuat * new Vector3(0, 0, -Dist);
 
-		transform.position = CameraTarget.position + offset;
-		transform.LookAt(CameraTarget);
+		// Apply position and keep pan offset
+		transform.position = CameraTarget.position + offset + panOffset;
+		transform.LookAt(CameraTarget.position + panOffset); // Apply pan offset to focus point
 	}
 }

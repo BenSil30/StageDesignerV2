@@ -15,6 +15,7 @@ public class SelectionManager : MonoBehaviour
 	public Material SelectedItemStorageMat;
 
 	public LightProperties CurrentLightProperties;
+	public ItemManager ItemManager;
 
 	private void Update()
 	{
@@ -86,6 +87,7 @@ public class SelectionManager : MonoBehaviour
 	{
 		if (SelectedObject != null)
 		{
+			ItemManager.SpawnedItems.Remove(SelectedObject);
 			Destroy(SelectedObject);
 			CurrentLightProperties = null;
 			SelectedItemStorageMat = null;
