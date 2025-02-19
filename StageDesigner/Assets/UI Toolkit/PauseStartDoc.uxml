@@ -1,7 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: center; display: flex;">
-        <engine:Button text="Play" name="StageButton" style="justify-content: flex-end; width: 214px; height: 55px; font-size: 33px;" />
-        <engine:Button text="Choose stage" name="ChooseStageButton" style="width: 224px; justify-content: flex-end; height: 55px; font-size: 33px;" />
+        <engine:Button text="Play" name="PlayButton" style="justify-content: flex-end; width: 214px; height: 55px; font-size: 33px;" />
         <engine:Button text="Graphics Settings" name="GraphicsSettingsButton" style="width: 311px; justify-content: flex-end; height: 55px; font-size: 33px;" />
         <engine:Button text="Export" name="ExportButton" style="height: 55px; width: 171px; justify-content: flex-end; font-size: 33px;" />
     </engine:VisualElement>

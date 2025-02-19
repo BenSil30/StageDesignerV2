@@ -1,5 +1,6 @@
 using Ookii.Dialogs;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,6 +9,7 @@ using static UnityEngine.Rendering.DebugUI;
 public class LightProperties : MonoBehaviour
 {
 	public UIManager UIManager;
+	public List<KeyframeClass> KeyframesOnPrefab = new List<KeyframeClass>(); // Holds keyframes for this light
 
 	public Light[] LightsOnPrefab;
 	public Light SelectedLight = null;
@@ -41,6 +43,109 @@ public class LightProperties : MonoBehaviour
 	private void Update()
 	{
 		StrobeLight();
+
+		// only update if on main menu and animation panel is NOT visible
+		if (FindFirstObjectByType<UIManager>().HUDVisible && !FindFirstObjectByType<UIManager>().AnimationPanelVisible) UpdateKeyframes();
+	}
+
+	public void AddKeyframe(float time)
+	{
+		if (SelectedLight != null)
+		{
+			KeyframeClass newKeyframe = new KeyframeClass(
+				time,
+				SelectedLight,
+				transform.position,
+				transform.rotation,
+				SelectedLight.intensity,
+				SelectedLight.color,
+				RotationSpeed,
+				PulseRate,
+				PulseOn,
+				IsAnimating);
+			KeyframesOnPrefab.Add(newKeyframe);
+			KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
+		}
+		else
+		{
+			KeyframeClass newKeyframe = new KeyframeClass(
+				time,
+				transform.position,
+				transform.rotation,
+				LightMaterial.GetColor("_EmissionColor"),
+				LightMaterial.color,
+				RotationSpeed,
+				PulseRate,
+				PulseOn,
+				IsAnimating
+			);
+			KeyframesOnPrefab.Add(newKeyframe);
+			KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
+		}
+		// log with all keyframe added info
+		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {SelectedLight.intensity} - Color: {SelectedLight.color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
+	}
+
+	public void UpdateKeyframes()
+	{
+		if (KeyframesOnPrefab.Count < 0) return;
+		float currentTime = FindFirstObjectByType<UIManager>()._musicProgressSlider.value;
+		KeyframeClass currentKeyframe = null;
+		KeyframeClass nextKeyframe = null;
+
+		// find previous and next keyframes
+		for (int i = 0; i < KeyframesOnPrefab.Count - 1; i++)
+		{
+			// check if grabbing correct frames for the time
+			if (KeyframesOnPrefab[i].KeyframeTime <= currentTime
+				&& KeyframesOnPrefab[i + 1].KeyframeTime >= currentTime)
+			{
+				currentKeyframe = KeyframesOnPrefab[i];
+				nextKeyframe = KeyframesOnPrefab[i + 1];
+
+				// if the prefab has lights and the current keyframe light is not the same as the next keyframe light, iterate until the keyframe light matches
+				if (LightsOnPrefab.Length > 0 && currentKeyframe.KeyframeLight != nextKeyframe.KeyframeLight)
+				{
+					for (int j = i + 1; j < KeyframesOnPrefab.Count; j++)
+					{
+						// if next keyframe is found, break out of the inner and outer loops
+						if (currentKeyframe.KeyframeLight == KeyframesOnPrefab[j].KeyframeLight && KeyframesOnPrefab[j].KeyframeTime >= currentTime)
+						{
+							nextKeyframe = KeyframesOnPrefab[j];
+							break;
+						}
+					}
+					Debug.Log($"Current Keyframe Time: {currentKeyframe.KeyframeTime} - Next Keyframe Time: {nextKeyframe.KeyframeTime}");
+					break;
+				}
+			}
+		}
+
+		// log the times of current and next keyframes
+
+		if (currentKeyframe != null && nextKeyframe != null)
+		{
+			float t = (currentTime - currentKeyframe.KeyframeTime) / (nextKeyframe.KeyframeTime - currentKeyframe.KeyframeTime);
+			transform.position = Vector3.Lerp(currentKeyframe.KeyframePosition, nextKeyframe.KeyframePosition, t);
+			transform.rotation = Quaternion.Slerp(currentKeyframe.KeyframeRotation, nextKeyframe.KeyframeRotation, t);
+
+			if (LightsOnPrefab.Length > 0)
+			{
+				currentKeyframe.KeyframeLight.intensity = Mathf.Lerp(currentKeyframe.KeyframeIntensity, nextKeyframe.KeyframeIntensity, t);
+				currentKeyframe.KeyframeLight.color = Color.Lerp(currentKeyframe.KeyframeColor, nextKeyframe.KeyframeColor, t);
+			}
+			else
+			{
+				LightMaterial.SetColor("_EmissionColor", Color.Lerp(currentKeyframe.AlternativeKeyframeIntensity, nextKeyframe.AlternativeKeyframeIntensity, t));
+				LightMaterial.color = Color.Lerp(currentKeyframe.KeyframeColor, nextKeyframe.KeyframeColor, t);
+			}
+
+			RotationSpeed = Mathf.Lerp(currentKeyframe.KeyframeRotationSpeed, nextKeyframe.KeyframeRotationSpeed, t);
+			PulseRate = Mathf.Lerp(currentKeyframe.KeyframePulseRate, nextKeyframe.KeyframePulseRate, t);
+
+			PulseOn = currentKeyframe.KeyframePulseOn;
+			IsAnimating = currentKeyframe.KeyframeIsAnimating;
+		}
 	}
 
 	public void AddListeners()
@@ -54,7 +159,7 @@ public class LightProperties : MonoBehaviour
 		UIManager.RotSpeedSlider.RegisterValueChangedCallback(RotationSpeedUpdated);
 		UIManager.PulseRateSlider.RegisterValueChangedCallback(PulseRateUpdated);
 
-		UIManager.StartStopAnimationButton.clicked += StartStopAnimation;
+		UIManager.AddKeyframeAnimationButton.clicked += StartStopAnimation;
 	}
 
 	public void RemoveListeners()
@@ -68,10 +173,10 @@ public class LightProperties : MonoBehaviour
 		UIManager.RotSpeedSlider.UnregisterValueChangedCallback(RotationSpeedUpdated);
 		UIManager.PulseRateSlider.UnregisterValueChangedCallback(PulseRateUpdated);
 
-		UIManager.StartStopAnimationButton.clicked -= StartStopAnimation;
+		UIManager.AddKeyframeAnimationButton.clicked -= StartStopAnimation;
 	}
 
-	private void IntensityUpdated(ChangeEvent<float> evt)
+	public void IntensityUpdated(ChangeEvent<float> evt)
 	{
 		if (SelectedLight != null)
 		{
@@ -84,7 +189,7 @@ public class LightProperties : MonoBehaviour
 		}
 	}
 
-	private void LightColorUpdated(ChangeEvent<float> evt)
+	public void LightColorUpdated(ChangeEvent<float> evt)
 	{
 		if (SelectedLight != null)
 		{
@@ -98,11 +203,12 @@ public class LightProperties : MonoBehaviour
 		}
 	}
 
-	private void RotationSpeedUpdated(ChangeEvent<float> evt)
+	public void RotationSpeedUpdated(ChangeEvent<float> evt)
 	{
+		RotationSpeed = evt.newValue;
 	}
 
-	private void PulseRateUpdated(ChangeEvent<float> evt)
+	public void PulseRateUpdated(ChangeEvent<float> evt)
 	{
 		PulseRate = evt.newValue;
 	}
@@ -211,10 +317,7 @@ public class LightProperties : MonoBehaviour
 		// if prefab doesn't have any lights but has an emissive material instead
 		else if (LightMaterial != null)
 		{
-			// todo: update sliders to regulars and not ints, remove casts
 			UIManager.IntensitySlider.value = LightMaterial.GetColor("_EmissionColor").maxColorComponent;
-
-			// todo add range value to the UI
 			//UIManager._rangeSlider.value = SelectedLight.range;
 
 			UIManager.RedSlider.value = LightMaterial.GetColor("_EmissionColor").r;

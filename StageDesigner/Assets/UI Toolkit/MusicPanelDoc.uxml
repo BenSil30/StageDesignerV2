@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="Root" style="flex-grow: 0; flex-direction: column; flex-shrink: 0; align-items: stretch; align-self: flex-start; justify-content: center; flex-wrap: nowrap; height: 217px; width: 100%; display: flex; align-content: center; padding-left: 20px; padding-top: 18px;">
+        <engine:VisualElement style="flex-grow: 1; flex-direction: row; flex-shrink: 1; width: auto;">
+            <engine:Button text="Upload File" name="UploadButton" style="width: auto;" />
+            <engine:Label text="Title:" name="TitleLabel" style="align-items: center; justify-content: center; width: 100px; height: 50px; -unity-text-align: upper-center; font-size: 33px; color: rgb(255, 255, 255);" />
+            <engine:Label text="No File Uploaded" name="SongTitle" emoji-fallback-support="false" selectable="true" style="align-items: center; justify-content: center; width: 100px; height: 50px; -unity-text-align: upper-left; font-size: 33px; flex-grow: 1; flex-shrink: 1; color: rgb(255, 255, 255);" />
+        </engine:VisualElement>
+        <engine:Button text="Restart Song" name="RestartButton" style="width: 145px;" />
+    </engine:VisualElement>
+</engine:UXML>

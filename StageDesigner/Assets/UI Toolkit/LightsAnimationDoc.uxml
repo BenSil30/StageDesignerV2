@@ -1,15 +1,13 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=b19eab582283e574b808dbbbf33927f8&amp;type=3#test" />
     <engine:VisualElement name="Root" style="flex-grow: 1; align-items: flex-start; justify-content: center; width: auto; display: flex; padding-left: 15px; padding-top: 25px; padding-bottom: 25px; padding-right: -2px;">
-        <engine:Label name="SelectedObject" style="flex-grow: 0; align-items: flex-start; justify-content: center; font-size: 21px; flex-shrink: 0; flex-direction: column-reverse; height: auto;" />
-        <engine:Button text="Next Light" name="NextLightButton" />
-        <engine:Slider label="Intensity" value="42" high-value="60" name="LightIntensitySlider" low-value="3" show-input-field="true" fill="false" style="width: 455px; color: rgb(255, 255, 255);" />
+        <engine:Button text="Next Light" name="NextLightButton" style="visibility: hidden;" />
+        <engine:Slider label="Intensity" value="42" high-value="150" name="LightIntensitySlider" low-value="3" show-input-field="true" fill="false" style="width: 455px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
         <engine:Label text="Color" name="ColorTitle" style="font-size: 20px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Red" value="42" high-value="255" name="RedColorSlider" show-input-field="true" fill="false" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Green" value="42" high-value="255" name="GreenColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Blue" value="42" high-value="255" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Pulse Rate" value="42" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Slider label="Rot Speed" value="42" high-value="100" name="RotSpeedSlider" style="width: 500px; color: rgb(255, 255, 255);" />
-        <engine:Button text="Start/Stop" name="ToggleAnimationButton" style="font-size: 24px;" />
+        <engine:Slider label="Red" value="42" high-value="255" name="RedColorSlider" show-input-field="true" fill="false" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+        <engine:Slider label="Green" value="42" high-value="255" name="GreenColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+        <engine:Slider label="Blue" value="42" high-value="255" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+        <engine:Slider label="Pulse Rate" value="0" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+        <engine:Slider label="Rot Speed" value="0" high-value="100" name="RotSpeedSlider" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+        <engine:Button text="Add Keyframe" name="AddKeyframeAnimationPanelButton" style="font-size: 24px;" />
     </engine:VisualElement>
 </engine:UXML>

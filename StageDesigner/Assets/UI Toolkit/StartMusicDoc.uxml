@@ -1,0 +1,8 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: center;">
+        <engine:Label text="No File uploaded" name="FileNameLabel" style="font-size: 35px;" />
+        <engine:Button text="Upload File" name="UploadFile" style="justify-content: flex-end; width: 245px; height: 55px; font-size: 33px;" />
+        <engine:Button text="Select Stage" name="GoToSelectStageFromMusic" style="height: 55px; width: 247px; justify-content: flex-end; font-size: 33px;" />
+        <engine:Button text="Back" name="GoToStartFromMusic" style="height: 55px; width: 171px; justify-content: flex-end; font-size: 33px;" />
+    </engine:VisualElement>
+</engine:UXML>
