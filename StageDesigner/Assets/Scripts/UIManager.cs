@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using SFB;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
@@ -9,6 +10,8 @@ using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
+	public SelectionManager sm;
+
 	public UIDocument HUDDoc;
 	public UIDocument ItemsPanelDoc;
 	public UIDocument StartMenuDoc;
@@ -124,6 +127,9 @@ public class UIManager : MonoBehaviour
 	public Slider RotSpeedSlider;
 
 	public Button AddKeyframeAnimationButton;
+	private Button _backButtonAnimation;
+
+	public ScrollView KeyframeVisualList;
 
 	#endregion Animation settings UI Elements
 
@@ -186,7 +192,16 @@ public class UIManager : MonoBehaviour
 		{
 			if (AudioSource.clip != null)
 			{
-				AudioSource.time = evt.newValue;
+				if (!AudioSource.isPlaying) AudioSource.time = evt.newValue;
+				if (sm.CurrentLightProperties != null) sm.CurrentLightProperties.UpdateKeyframes();
+			}
+		});
+		// when dragging the slider, subscibe a method
+		_musicProgressSlider.RegisterCallback<MouseDownEvent>(evt =>
+		{
+			if (sm.SelectedObject != null)
+			{
+				sm.CurrentLightProperties.UpdateKeyframes();
 			}
 		});
 
@@ -289,8 +304,6 @@ public class UIManager : MonoBehaviour
 
 		#region Animation settings UI Elements
 
-		SelectionManager sm = FindFirstObjectByType<SelectionManager>();
-
 		VisualElement LightsAnimationRoot = LightsAnimationDoc.rootVisualElement;
 		NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
 		NextLightButton.clicked += NextLightButtonHit;
@@ -307,7 +320,10 @@ public class UIManager : MonoBehaviour
 		AddKeyframeAnimationButton = LightsAnimationRoot.Q<Button>(
 			"AddKeyframeAnimationPanelButton"
 		);
+		_backButtonAnimation = LightsAnimationRoot.Q<Button>("BackButtonAnimation");
+		KeyframeVisualList = LightsAnimationRoot.Q<ScrollView>("KeyframeVisualList");
 		AddKeyframeAnimationButton.clicked += AddKeyframeClicked;
+		_backButtonAnimation.clicked += () => TogglePanelVisibility("AllOff");
 
 		#endregion Animation settings UI Elements
 
@@ -349,7 +365,6 @@ public class UIManager : MonoBehaviour
 			_startButton.clicked += () => TogglePanelVisibility("AllOff");
 		}
 		// hide add keyframe button if nothing selected
-		SelectionManager sm = FindFirstObjectByType<SelectionManager>();
 		if (sm.SelectedObject == null || !HUDVisible)
 		{
 			_addKeyframeButton.style.visibility = Visibility.Hidden;
@@ -381,11 +396,61 @@ public class UIManager : MonoBehaviour
 
 	private void AddKeyframeClicked()
 	{
-		SelectionManager sm = FindFirstObjectByType<SelectionManager>();
 		if (sm.SelectedObject != null)
 		{
 			sm.CurrentLightProperties.AddKeyframe(_musicProgressSlider.value);
 		}
+		RefreshKeyframeList();
+	}
+
+	public void RefreshKeyframeList()
+	{
+		KeyframeVisualList.Clear();
+		if (sm.CurrentLightProperties != null)
+		{
+			foreach (var keyframe in sm.CurrentLightProperties.KeyframesOnPrefab)
+			{
+				// Create a label for each keyframe
+				// also show color and selected light index
+				var keyframeEntry = new VisualElement();
+				keyframeEntry.style.flexDirection = FlexDirection.Row;
+				keyframeEntry.AddToClassList("keyframe-entry");
+
+				var keyframeLabel = new Label($"Time: {keyframe.KeyframeTime} | Light #: {keyframe.KeyframeLightIndex} | Position: {keyframe.KeyframePosition} | Intensity: {keyframe.KeyframeIntensity}");
+				keyframeLabel.style.color = Color.white;
+				keyframeEntry.Add(keyframeLabel);
+
+				var jumpButton = new Button(() => JumpToKeyframe(keyframe.KeyframeTime))
+				{
+					text = "Jump"
+				};
+				var deleteButton = new Button(() => DeleteKeyframe(keyframe.KeyframeTime))
+				{
+					text = "Delete"
+				};
+
+				keyframeEntry.Add(jumpButton);
+				keyframeEntry.Add(deleteButton);
+
+				KeyframeVisualList.Add(keyframeEntry);
+			}
+		}
+	}
+
+	public void DeleteKeyframe(float time)
+	{
+		if (sm.SelectedObject != null)
+		{
+			sm.CurrentLightProperties.DeleteKeyframe(time);
+		}
+		RefreshKeyframeList();
+	}
+
+	public void JumpToKeyframe(float time)
+	{
+		AudioSource.time = time;
+		_musicProgressSlider.value = time;
+		sm.CurrentLightProperties.UpdateKeyframes();
 	}
 
 	public void TogglePanelVisibility(string panelName)
@@ -643,7 +708,6 @@ public class UIManager : MonoBehaviour
 
 	private void NextLightButtonHit()
 	{
-		SelectionManager sm = FindFirstObjectByType<SelectionManager>();
 		if (sm.SelectedObject != null | sm.CurrentLightProperties.LightsOnPrefab.Length == 1)
 			return;
 		if (

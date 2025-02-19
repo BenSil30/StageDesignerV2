@@ -47,11 +47,17 @@ public class LightProperties : MonoBehaviour
 		StrobeLight();
 
 		// only update if on main menu and animation panel is NOT visible
-		if (FindFirstObjectByType<UIManager>().HUDVisible && !FindFirstObjectByType<UIManager>().AnimationPanelVisible) UpdateKeyframes();
+		// todo: this doesn't update when dragging the timeline because it's being skipped
+		if (FindFirstObjectByType<UIManager>().HUDVisible && !FindFirstObjectByType<UIManager>().AnimationPanelVisible && Input.GetMouseButton(1)) UpdateKeyframes();
 	}
 
 	public void AddKeyframe(float time)
 	{
+		if (KeyframesOnPrefab.Exists(x => x.KeyframeTime == time))
+		{
+			UpdateKeyframe(time);
+			return;
+		}
 		if (SelectedLight != null)
 		{
 			KeyframeClass newKeyframe = new KeyframeClass(
@@ -86,6 +92,22 @@ public class LightProperties : MonoBehaviour
 		}
 		// log with all keyframe added info
 		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {SelectedLight.intensity} - Color: {SelectedLight.color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
+	}
+
+	public void UpdateKeyframe(float time)
+	{
+		KeyframeClass keyframeToUpdate = KeyframesOnPrefab.Find(x => x.KeyframeTime == time);
+		DeleteKeyframe(time);
+		AddKeyframe(time);
+
+		KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
+	}
+
+	public void DeleteKeyframe(float time)
+	{
+		KeyframeClass keyframeToDelete = KeyframesOnPrefab.Find(x => x.KeyframeTime == time);
+		KeyframesOnPrefab.Remove(keyframeToDelete);
+		KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 	}
 
 	public void UpdateKeyframes()

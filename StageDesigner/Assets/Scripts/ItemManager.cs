@@ -23,101 +23,6 @@ public class ItemManager : MonoBehaviour
 		newLight.tag = "LightInScene";
 		SpawnedItems.Add(newLight);
 		newLight.name = itemName + " " + SpawnedItems.Count;
-
-		//switch (itemName)
-		//{
-		//	case "Spotlight":
-		//		selectedItem = AvailableItems[0];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Blue laser":
-		//		selectedItem = AvailableItems[1];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Green laser":
-		//		selectedItem = AvailableItems[2];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Purple laser":
-		//		selectedItem = AvailableItems[3];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Red laser":
-		//		selectedItem = AvailableItems[4];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Three light":
-		//		selectedItem = AvailableItems[5];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Discoball":
-		//		selectedItem = AvailableItems[6];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Blue Fire":
-		//		selectedItem = AvailableItems[7];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Green Fire":
-		//		selectedItem = AvailableItems[8];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Purple Fire":
-		//		selectedItem = AvailableItems[9];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	case "Red Fire":
-		//		selectedItem = AvailableItems[10];
-		//		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
-		//		newLight.tag = "LightInScene";
-		//		SpawnedItems.Add(newLight);
-		//		newLight.name = itemName + " " + SpawnedItems.Count;
-		//		break;
-
-		//	default:
-		//		Debug.Log("Item not found: " + itemName);
-		//		break;
-		//}
 	}
 
 	[System.Serializable]
@@ -131,6 +36,9 @@ public class ItemManager : MonoBehaviour
 	public class KeyframeCollection
 	{
 		public List<LightKeyframeData> Lights = new List<LightKeyframeData>();
+		public int Stage;
+		public string SongName;
+		public float SongLength;
 	}
 
 	// todo: add stage selection and maybe music file to export
@@ -157,6 +65,8 @@ public class ItemManager : MonoBehaviour
 				keyframeCollection.Lights.Add(data);
 			}
 		}
+		keyframeCollection.Stage = FindFirstObjectByType<StageManager>().currentStage;
+		keyframeCollection.SongLength = FindFirstObjectByType<AudioSource>().clip.length;
 
 		string json = JsonUtility.ToJson(keyframeCollection, true); Debug.Log(json);
 		string filePath = Path.Combine(Application.persistentDataPath, "LightKeyframes.json");
@@ -177,6 +87,8 @@ public class ItemManager : MonoBehaviour
 
 		string json = File.ReadAllText(filePath);
 		KeyframeCollection keyframeCollection = JsonUtility.FromJson<KeyframeCollection>(json);
+		int stageIndex = JsonUtility.FromJson<KeyframeCollection>(json).Stage;
+		float songLength = JsonUtility.FromJson<KeyframeCollection>(json).SongLength;
 
 		foreach (var lightData in keyframeCollection.Lights)
 		{
@@ -196,6 +108,29 @@ public class ItemManager : MonoBehaviour
 			{
 				lightProperties.KeyframesOnPrefab = lightData.Keyframes;
 			}
+		}
+		switch (stageIndex)
+		{
+			case 0:
+				FindFirstObjectByType<StageManager>().SwitchStage("Default");
+				break;
+
+			case 1:
+				FindFirstObjectByType<StageManager>().SwitchStage("Paramount");
+				break;
+
+			case 2:
+				FindFirstObjectByType<StageManager>().SwitchStage("Ogden");
+				break;
+
+			default:
+				FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
+				break;
+		}
+
+		if (FindFirstObjectByType<AudioSource>().clip != null)
+		{
+			FindFirstObjectByType<UIManager>()._musicProgressSlider.highValue = songLength;
 		}
 
 		Debug.Log("Keyframes imported successfully!");

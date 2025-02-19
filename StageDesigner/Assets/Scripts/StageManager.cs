@@ -37,13 +37,9 @@ public class StageManager : MonoBehaviour
 				foreach (var staged in stages)
 				{
 					staged.SetActive(false);
+					currentStage = -1;
 				}
 				break;
 		}
-	}
-
-	// Update is called once per frame
-	private void Update()
-	{
 	}
 }

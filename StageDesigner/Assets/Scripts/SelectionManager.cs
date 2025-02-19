@@ -117,5 +117,6 @@ public class SelectionManager : MonoBehaviour
 			CurrentLightProperties.SelectedLight = CurrentLightProperties.LightsOnPrefab[0];
 		CurrentLightProperties.UpdateSliderValues();
 		CurrentLightProperties.AddListeners();
+		FindFirstObjectByType<UIManager>().RefreshKeyframeList();
 	}
 }

@@ -14,7 +14,7 @@
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="MusicHudRoot" style="flex-grow: 1; flex-direction: row; flex-shrink: 0; align-items: center; justify-content: center; margin-left: 10px; margin-right: 10px; margin-bottom: 10px;">
-            <engine:Button text="⏯️" name="PlayPauseMusicHudButton" style="font-size: 25px;" />
+            <engine:Button name="PlayPauseMusicHudButton" style="font-size: 25px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/play-or-pause-button-emoji-2048x2044-obudy5ir.png?fileID=2800000&amp;guid=cb325fb981578314883a561573fef5f8&amp;type=3#play-or-pause-button-emoji-2048x2044-obudy5ir&quot;); background-size: 119% 163%; width: auto; background-color: rgb(0, 0, 0); background-position-y: center 0; border-left-width: 0; border-bottom-width: 0; border-top-width: 0; margin-top: 0; margin-left: 0; margin-right: 0; margin-bottom: 0;" />
             <engine:Label text="0:00" style="align-items: center; justify-content: flex-end; -unity-text-align: middle-center; color: rgb(255, 255, 255);" />
             <engine:Slider value="0" high-value="100" fill="true" show-input-field="true" name="SongProgressSliderHud" style="flex-grow: 1; flex-shrink: 1; height: 45px;" />
             <engine:Label name="SongDurationIndicatorHud" style="-unity-text-align: middle-center; color: rgb(255, 255, 255);" />
