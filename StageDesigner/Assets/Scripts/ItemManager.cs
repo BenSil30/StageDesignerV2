@@ -3,6 +3,14 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#else
+using SFB; // Standalone File Browser for standalone builds
+#endif
+
 public class ItemManager : MonoBehaviour
 {
 	public List<GameObject> AvailableItems = new List<GameObject>();
@@ -44,6 +52,9 @@ public class ItemManager : MonoBehaviour
 	// todo: add stage selection and maybe music file to export
 	public void ExportAllKeyframes()
 	{
+		string filePath = GetSaveFilePath("Save Keyframes", "json");
+		if (string.IsNullOrEmpty(filePath)) return; // User canceled
+
 		KeyframeCollection keyframeCollection = new KeyframeCollection();
 
 		foreach (GameObject lightObj in SpawnedItems)
@@ -69,7 +80,6 @@ public class ItemManager : MonoBehaviour
 		keyframeCollection.SongLength = FindFirstObjectByType<AudioSource>().clip.length;
 
 		string json = JsonUtility.ToJson(keyframeCollection, true); Debug.Log(json);
-		string filePath = Path.Combine(Application.persistentDataPath, "LightKeyframes.json");
 		File.WriteAllText(filePath, json);
 
 		Debug.Log($"Keyframes exported to {filePath}");
@@ -78,7 +88,9 @@ public class ItemManager : MonoBehaviour
 	// todo: fix this method, the keyframelights need to be properly set or changed
 	public void ImportKeyframes()
 	{
-		string filePath = Path.Combine(Application.persistentDataPath, "LightKeyframes.json");
+		string filePath = GetOpenFilePath("Load Keyframes", "json");
+		if (string.IsNullOrEmpty(filePath)) return; // User canceled
+
 		if (!File.Exists(filePath))
 		{
 			Debug.LogError("Keyframe file not found!");
@@ -109,23 +121,13 @@ public class ItemManager : MonoBehaviour
 				lightProperties.KeyframesOnPrefab = lightData.Keyframes;
 			}
 		}
+		StageManager stageManager = FindFirstObjectByType<StageManager>();
 		switch (stageIndex)
 		{
-			case 0:
-				FindFirstObjectByType<StageManager>().SwitchStage("Default");
-				break;
-
-			case 1:
-				FindFirstObjectByType<StageManager>().SwitchStage("Paramount");
-				break;
-
-			case 2:
-				FindFirstObjectByType<StageManager>().SwitchStage("Ogden");
-				break;
-
-			default:
-				FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
-				break;
+			case 0: stageManager.SwitchStage("Default"); break;
+			case 1: stageManager.SwitchStage("Paramount"); break;
+			case 2: stageManager.SwitchStage("Ogden"); break;
+			default: stageManager.SwitchStage("AllOff"); break;
 		}
 
 		if (FindFirstObjectByType<AudioSource>().clip != null)
@@ -135,5 +137,25 @@ public class ItemManager : MonoBehaviour
 
 		Debug.Log("Keyframes imported successfully!");
 		FindFirstObjectByType<UIManager>().TogglePanelVisibility("AllOff");
+	}
+
+	private string GetSaveFilePath(string title, string extension)
+	{
+#if UNITY_EDITOR
+		return EditorUtility.SaveFilePanel(title, Application.persistentDataPath, "LightKeyframes", extension);
+#else
+        var path = StandaloneFileBrowser.SaveFilePanel(title, Application.persistentDataPath, "LightKeyframes", new[] { new ExtensionFilter("JSON Files", "json") });
+        return string.IsNullOrEmpty(path) ? null : path;
+#endif
+	}
+
+	private string GetOpenFilePath(string title, string extension)
+	{
+#if UNITY_EDITOR
+		return EditorUtility.OpenFilePanel(title, Application.persistentDataPath, extension);
+#else
+        var paths = StandaloneFileBrowser.OpenFilePanel(title, Application.persistentDataPath, new[] { new ExtensionFilter("JSON Files", "json") }, false);
+        return paths.Length > 0 ? paths[0] : null;
+#endif
 	}
 }
