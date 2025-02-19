@@ -1,22 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:VisualElement name="root" style="flex-grow: 1; flex-direction: row; height: auto; width: auto; padding-left: 0; padding-bottom: 0; margin-top: 20px; margin-left: 40px;">
+    <engine:VisualElement name="root" style="flex-grow: 1; flex-direction: column; height: auto; width: auto; padding-left: 0; padding-bottom: 0; margin-top: 20px; margin-left: 40px;">
         <engine:Button text="Back" name="BackButtonItemsPanel" style="width: 132px; font-size: 33px; height: 69px;" />
-        <engine:VisualElement style="flex-grow: 0; height: auto; width: auto; flex-direction: column; align-self: flex-start;">
-            <engine:Button text="Spotlight" name="Item0Button" style="width: 200px; font-size: 33px; flex-grow: 0; flex-direction: column;" />
-            <engine:Button text="Blue laser" name="Item1Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="Green laser" name="Item2Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="Purple laser" name="Item3Button" style="width: 200px; font-size: 33px;" />
-        </engine:VisualElement>
-        <engine:VisualElement style="flex-grow: 0; height: auto; width: auto; flex-direction: column; flex-shrink: 1; align-items: auto; justify-content: flex-start; align-self: flex-start;">
-            <engine:Button text="Red laser" name="Item4Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="Three light" name="Item5Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="Discoball" name="Item6Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="Blue fire" name="Item7Button" style="width: 200px; font-size: 33px;" />
-        </engine:VisualElement>
-        <engine:VisualElement style="flex-grow: 0; height: auto; width: auto; flex-direction: column; flex-shrink: 1; align-items: auto; justify-content: flex-start; align-self: flex-start;">
-            <engine:Button text="Green Fire" name="Item8Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
-            <engine:Button text="Purple Fire" name="Item9Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
-            <engine:Button text="Red Fire" name="Item10Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
-        </engine:VisualElement>
+        <engine:ScrollView name="ButtonScroller" horizontal-scroller-visibility="Hidden" tooltip="Scroll for options" style="height: 400px; width: 220px;" />
     </engine:VisualElement>
 </engine:UXML>

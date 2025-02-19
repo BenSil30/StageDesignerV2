@@ -211,30 +211,44 @@ public class UIManager : MonoBehaviour
 
 		VisualElement ItemsPanelRoot = ItemsPanelDoc.rootVisualElement;
 		_backButtonItems = ItemsPanelRoot.Q<Button>("BackButtonItemsPanel");
-		_item0Button = ItemsPanelRoot.Q<Button>("Item0Button");
-		_item1Button = ItemsPanelRoot.Q<Button>("Item1Button");
-		_item2Button = ItemsPanelRoot.Q<Button>("Item2Button");
-		_item3Button = ItemsPanelRoot.Q<Button>("Item3Button");
-		_item4Button = ItemsPanelRoot.Q<Button>("Item4Button");
-		_item5Button = ItemsPanelRoot.Q<Button>("Item5Button");
-		_item6Button = ItemsPanelRoot.Q<Button>("Item6Button");
-		_item7Button = ItemsPanelRoot.Q<Button>("Item7Button");
-		_item8Button = ItemsPanelRoot.Q<Button>("Item8Button");
-		_items9Button = ItemsPanelRoot.Q<Button>("Item9Button");
-		_items10Button = ItemsPanelRoot.Q<Button>("Item10Button");
+		ScrollView ButtonsRoot = ItemsPanelRoot.Q<ScrollView>("ButtonScroller");
+		ItemManager im = FindFirstObjectByType<ItemManager>();
+		for (int i = 0; i < im.AvailableItems.Count; i++)
+		{
+			string name = im.AvailableItems[i].name;
+			var newButton = new Button(() => ItemSelectedFromPanel(name))
+			{
+				text = name
+			};
+			// change the size of newButton to be 200px wide with a font size of 32
+			newButton.style.fontSize = 32;
+			newButton.style.width = 200;
+			ButtonsRoot.Add(newButton);
+		}
+		// _item0Button = ItemsPanelRoot.Q<Button>("Item0Button");
+		// _item1Button = ItemsPanelRoot.Q<Button>("Item1Button");
+		// _item2Button = ItemsPanelRoot.Q<Button>("Item2Button");
+		// _item3Button = ItemsPanelRoot.Q<Button>("Item3Button");
+		// _item4Button = ItemsPanelRoot.Q<Button>("Item4Button");
+		// _item5Button = ItemsPanelRoot.Q<Button>("Item5Button");
+		// _item6Button = ItemsPanelRoot.Q<Button>("Item6Button");
+		// _item7Button = ItemsPanelRoot.Q<Button>("Item7Button");
+		// _item8Button = ItemsPanelRoot.Q<Button>("Item8Button");
+		// _items9Button = ItemsPanelRoot.Q<Button>("Item9Button");
+		// _items10Button = ItemsPanelRoot.Q<Button>("Item10Button");
 
 		_backButtonItems.clicked += () => TogglePanelVisibility("AllOff");
-		_item0Button.clicked += () => ItemSelectedFromPanel(_item0Button);
-		_item1Button.clicked += () => ItemSelectedFromPanel(_item1Button);
-		_item2Button.clicked += () => ItemSelectedFromPanel(_item2Button);
-		_item3Button.clicked += () => ItemSelectedFromPanel(_item3Button);
-		_item4Button.clicked += () => ItemSelectedFromPanel(_item4Button);
-		_item5Button.clicked += () => ItemSelectedFromPanel(_item5Button);
-		_item6Button.clicked += () => ItemSelectedFromPanel(_item6Button);
-		_item7Button.clicked += () => ItemSelectedFromPanel(_item7Button);
-		_item8Button.clicked += () => ItemSelectedFromPanel(_item8Button);
-		_items9Button.clicked += () => ItemSelectedFromPanel(_items9Button);
-		_items10Button.clicked += () => ItemSelectedFromPanel(_items10Button);
+		// _item0Button.clicked += () => ItemSelectedFromPanel(_item0Button);
+		// _item1Button.clicked += () => ItemSelectedFromPanel(_item1Button);
+		// _item2Button.clicked += () => ItemSelectedFromPanel(_item2Button);
+		// _item3Button.clicked += () => ItemSelectedFromPanel(_item3Button);
+		// _item4Button.clicked += () => ItemSelectedFromPanel(_item4Button);
+		// _item5Button.clicked += () => ItemSelectedFromPanel(_item5Button);
+		// _item6Button.clicked += () => ItemSelectedFromPanel(_item6Button);
+		// _item7Button.clicked += () => ItemSelectedFromPanel(_item7Button);
+		// _item8Button.clicked += () => ItemSelectedFromPanel(_item8Button);
+		// _items9Button.clicked += () => ItemSelectedFromPanel(_items9Button);
+		// _items10Button.clicked += () => ItemSelectedFromPanel(_items10Button);
 
 		#endregion Items UI elements
 
