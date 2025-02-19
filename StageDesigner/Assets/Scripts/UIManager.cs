@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using SFB;
 using UnityEngine;
-using System.IO;
-using UnityEngine.UIElements;
-using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviour
 	private Button _item6Button;
 	private Button _item7Button;
 	private Button _item8Button;
+	private Button _items9Button;
+	private Button _items10Button;
 
 	#endregion Items UI Elements
 
@@ -65,8 +67,9 @@ public class UIManager : MonoBehaviour
 	private Button _startButton;
 	private bool _startClicked = false;
 
-	private Button _exportButtonP;
 	private Button _graphicsSettignsButtonP;
+	private Button _exportButtonP;
+	private Button _importButtonP;
 
 	#endregion Start UI Elements
 
@@ -90,18 +93,19 @@ public class UIManager : MonoBehaviour
 
 	#endregion Stage Selection UI Elements
 
-	#region Uploader UI Elements
+	#region Music Uploader Panel UI Elements
 
 	private Button _importButton;
 
 	private Label _songTitleLabel;
 	private Button _restartButton;
+	private Button _exitMusicUploaderPanelButton;
 
 	public AudioSource AudioSource;
 	public AudioClip AudioClip;
 	public bool MusicIsPlaying = false;
 
-	#endregion Uploader UI Elements
+	#endregion Music Uploader Panel UI Elements
 
 	#region Animation settings UI Elements
 
@@ -201,6 +205,8 @@ public class UIManager : MonoBehaviour
 		_item6Button = ItemsPanelRoot.Q<Button>("Item6Button");
 		_item7Button = ItemsPanelRoot.Q<Button>("Item7Button");
 		_item8Button = ItemsPanelRoot.Q<Button>("Item8Button");
+		_items9Button = ItemsPanelRoot.Q<Button>("Item9Button");
+		_items10Button = ItemsPanelRoot.Q<Button>("Item10Button");
 
 		_backButtonItems.clicked += () => TogglePanelVisibility("AllOff");
 		_item0Button.clicked += () => ItemSelectedFromPanel(_item0Button);
@@ -212,6 +218,8 @@ public class UIManager : MonoBehaviour
 		_item6Button.clicked += () => ItemSelectedFromPanel(_item6Button);
 		_item7Button.clicked += () => ItemSelectedFromPanel(_item7Button);
 		_item8Button.clicked += () => ItemSelectedFromPanel(_item8Button);
+		_items9Button.clicked += () => ItemSelectedFromPanel(_items9Button);
+		_items10Button.clicked += () => ItemSelectedFromPanel(_items10Button);
 
 		#endregion Items UI elements
 
@@ -221,14 +229,12 @@ public class UIManager : MonoBehaviour
 		_startButton = PauseStartRoot.Q<Button>("PlayButton");
 		_graphicsSettignsButtonP = PauseStartRoot.Q<Button>("GraphicsSettingsButton");
 		_exportButtonP = PauseStartRoot.Q<Button>("ExportButton");
+		_importButtonP = PauseStartRoot.Q<Button>("ImportButton");
 
 		_startButton.clicked += () => TogglePanelVisibility("MusicUploaderStartMenu");
-		_startButton.clicked += () =>
-		{
-			if (!_startClicked) _startClicked = true;
-		};
 		_graphicsSettignsButtonP.clicked += () => TogglePanelVisibility("GraphicsSettings");
-		_exportButtonP.clicked += ExportClicked;
+		_exportButtonP.clicked += FindFirstObjectByType<ItemManager>().ExportAllKeyframes;
+		_importButtonP.clicked += FindFirstObjectByType<ItemManager>().ImportKeyframes;
 
 		#endregion Start UI Elements
 
@@ -236,12 +242,17 @@ public class UIManager : MonoBehaviour
 
 		VisualElement MusicUploadStart = MusicUploaderStartMenuDoc.rootVisualElement;
 		_fileNameLabel = MusicUploadStart.Q<Label>("FileNameLabel");
-		_chooseFileButton = MusicUploadStart.Q<Button>("ChooseFileButton");
+		_chooseFileButton = MusicUploadStart.Q<Button>("UploadFile");
 		_goToSelectStageFromMusicUploader = MusicUploadStart.Q<Button>("GoToSelectStageFromMusic");
-		_goBackToStartFromMusicUploader = MusicUploadStart.Q<Button>("GoBackToStartButtonFromMusic");
+		_goBackToStartFromMusicUploader = MusicUploadStart.Q<Button>("GoToStartFromMusic");
 
 		_chooseFileButton.clicked += ImportClicked;
 		_goToSelectStageFromMusicUploader.clicked += () => TogglePanelVisibility("StageSelection");
+		_goToSelectStageFromMusicUploader.clicked += () =>
+		{
+			if (!_startClicked)
+				_startClicked = true;
+		};
 		_goBackToStartFromMusicUploader.clicked += () => TogglePanelVisibility("PauseStart");
 
 		#endregion	Music Uploader Start Panel UI Elements
@@ -257,7 +268,8 @@ public class UIManager : MonoBehaviour
 		_defaultStageButton.clicked += DefaultStageClicked;
 		_paramountStageButton.clicked += ParamountStageClicked;
 		_ogdenStageButton.clicked += OgdenStageClicked;
-		_backButton.clicked += () => TogglePanelVisibility("PauseStart"); ;
+		_backButton.clicked += () => TogglePanelVisibility("PauseStart");
+		;
 
 		#endregion Stage Selection UI Elements
 
@@ -267,18 +279,18 @@ public class UIManager : MonoBehaviour
 		_importButton = MusicUploaderRoot.Q<Button>("UploadButton");
 		_songTitleLabel = MusicUploaderRoot.Q<Label>("SongTitle");
 		_restartButton = MusicUploaderRoot.Q<Button>("RestartButton");
+		_exitMusicUploaderPanelButton = MusicUploaderRoot.Q<Button>("ExitMusicPanelButton");
 
 		_importButton.clicked += ImportClicked;
 		_restartButton.clicked += RestartMusicClicked;
+		_exitMusicUploaderPanelButton.clicked += () => TogglePanelVisibility("AllOff");
 
 		#endregion Music Uploader UI Elements
 
 		#region Animation settings UI Elements
 
-		// todo test if these actually change or not
 		SelectionManager sm = FindFirstObjectByType<SelectionManager>();
 
-		// todo add functionality to all of these
 		VisualElement LightsAnimationRoot = LightsAnimationDoc.rootVisualElement;
 		NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
 		NextLightButton.clicked += NextLightButtonHit;
@@ -292,7 +304,9 @@ public class UIManager : MonoBehaviour
 		//_xScaleSlider = LightsAnimationRoot.Q<Slider>("XScaleSlider");
 		PulseRateSlider = LightsAnimationRoot.Q<Slider>("PulseRateSlider");
 		RotSpeedSlider = LightsAnimationRoot.Q<Slider>("RotSpeedSlider");
-		AddKeyframeAnimationButton = LightsAnimationRoot.Q<Button>("AddKeyframeAnimationPanelButton");
+		AddKeyframeAnimationButton = LightsAnimationRoot.Q<Button>(
+			"AddKeyframeAnimationPanelButton"
+		);
 		AddKeyframeAnimationButton.clicked += AddKeyframeClicked;
 
 		#endregion Animation settings UI Elements
@@ -374,7 +388,7 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	private void TogglePanelVisibility(string panelName)
+	public void TogglePanelVisibility(string panelName)
 	{
 		if (MusicIsPlaying & panelName != "ItemsPanel")
 		{
@@ -399,6 +413,8 @@ public class UIManager : MonoBehaviour
 				ItemsPanelDoc.rootVisualElement.focusable = false;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				StartMenuDoc.rootVisualElement.focusable = true;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				MusicUploaderDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -432,6 +448,8 @@ public class UIManager : MonoBehaviour
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				MusicUploaderStartMenuDoc.rootVisualElement.focusable = true;
+				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.focusable = false;
 				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				LightsAnimationDoc.rootVisualElement.focusable = false;
@@ -456,8 +474,8 @@ public class UIManager : MonoBehaviour
 				ItemsPanelDoc.rootVisualElement.focusable = true;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StageSelectionDoc.rootVisualElement.focusable = false;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -486,8 +504,10 @@ public class UIManager : MonoBehaviour
 				ItemsPanelDoc.rootVisualElement.focusable = false;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				StageSelectionDoc.rootVisualElement.focusable = true;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -546,8 +566,8 @@ public class UIManager : MonoBehaviour
 				ItemsPanelDoc.rootVisualElement.focusable = false;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StageSelectionDoc.rootVisualElement.focusable = false;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -577,8 +597,8 @@ public class UIManager : MonoBehaviour
 				ItemsPanelDoc.rootVisualElement.focusable = false;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StageSelectionDoc.rootVisualElement.focusable = false;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -607,8 +627,8 @@ public class UIManager : MonoBehaviour
 				ItemsPanelDoc.rootVisualElement.focusable = false;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
+				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				StageSelectionDoc.rootVisualElement.focusable = false;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
@@ -623,9 +643,13 @@ public class UIManager : MonoBehaviour
 
 	private void NextLightButtonHit()
 	{
-		SelectionManager sm = FindObjectOfType<SelectionManager>();
-		if (sm.SelectedObject != null | sm.CurrentLightProperties.LightsOnPrefab.Length == 1) return;
-		if (sm.CurrentLightProperties.CurrentLightIndex >= sm.CurrentLightProperties.LightsOnPrefab.Length - 1)
+		SelectionManager sm = FindFirstObjectByType<SelectionManager>();
+		if (sm.SelectedObject != null | sm.CurrentLightProperties.LightsOnPrefab.Length == 1)
+			return;
+		if (
+			sm.CurrentLightProperties.CurrentLightIndex
+			>= sm.CurrentLightProperties.LightsOnPrefab.Length - 1
+		)
 		{
 			sm.CurrentLightProperties.CurrentLightIndex = 0;
 		}
@@ -633,7 +657,9 @@ public class UIManager : MonoBehaviour
 		{
 			sm.CurrentLightProperties.CurrentLightIndex++;
 		}
-		sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[sm.CurrentLightProperties.CurrentLightIndex];
+		sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[
+			sm.CurrentLightProperties.CurrentLightIndex
+		];
 		sm.CurrentLightProperties.UpdateSliderValues();
 	}
 
@@ -644,21 +670,12 @@ public class UIManager : MonoBehaviour
 		if (buttonPressed != null)
 		{
 			Debug.Log(buttonPressed.name + " was pressed");
-			FindObjectOfType<ItemManager>().SpawnItem(buttonPressed.text);
+			FindFirstObjectByType<ItemManager>().SpawnItem(buttonPressed.text);
 		}
 		TogglePanelVisibility("AllOff");
 	}
 
 	#endregion Items Methods
-
-	#region PauseMenu Methods
-
-	private void ExportClicked()
-	{
-		// todo export stuff lmao
-	}
-
-	#endregion PauseMenu Methods
 
 	#region StageSelection Methods
 
@@ -666,24 +683,24 @@ public class UIManager : MonoBehaviour
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		FindObjectOfType<StageManager>().SwitchStage("AllOff");
-		FindObjectOfType<StageManager>().SwitchStage("Default");
+		FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
+		FindFirstObjectByType<StageManager>().SwitchStage("Default");
 	}
 
 	private void ParamountStageClicked()
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		FindObjectOfType<StageManager>().SwitchStage("AllOff");
-		FindObjectOfType<StageManager>().SwitchStage("Paramount");
+		FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
+		FindFirstObjectByType<StageManager>().SwitchStage("Paramount");
 	}
 
 	private void OgdenStageClicked()
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		FindObjectOfType<StageManager>().SwitchStage("AllOff");
-		FindObjectOfType<StageManager>().SwitchStage("Ogden");
+		FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
+		FindFirstObjectByType<StageManager>().SwitchStage("Ogden");
 	}
 
 	#endregion StageSelection Methods

@@ -25,6 +25,8 @@ public class LightProperties : MonoBehaviour
 	public bool PulseOn = false;
 	public bool IsAnimating = false;
 
+	public bool IsANonLightPrefab = false;
+
 	private Coroutine RotationCoroutine;
 
 	// todo: do light selection within prefabs that have multiple lights, has to add a new button to the UI for it
@@ -54,7 +56,7 @@ public class LightProperties : MonoBehaviour
 		{
 			KeyframeClass newKeyframe = new KeyframeClass(
 				time,
-				SelectedLight,
+				CurrentLightIndex,
 				transform.position,
 				transform.rotation,
 				SelectedLight.intensity,
@@ -104,12 +106,12 @@ public class LightProperties : MonoBehaviour
 				nextKeyframe = KeyframesOnPrefab[i + 1];
 
 				// if the prefab has lights and the current keyframe light is not the same as the next keyframe light, iterate until the keyframe light matches
-				if (LightsOnPrefab.Length > 0 && currentKeyframe.KeyframeLight != nextKeyframe.KeyframeLight)
+				if (LightsOnPrefab.Length > 0 && currentKeyframe.KeyframeLightIndex != nextKeyframe.KeyframeLightIndex)
 				{
 					for (int j = i + 1; j < KeyframesOnPrefab.Count; j++)
 					{
 						// if next keyframe is found, break out of the inner and outer loops
-						if (currentKeyframe.KeyframeLight == KeyframesOnPrefab[j].KeyframeLight && KeyframesOnPrefab[j].KeyframeTime >= currentTime)
+						if (currentKeyframe.KeyframeLightIndex == KeyframesOnPrefab[j].KeyframeLightIndex && KeyframesOnPrefab[j].KeyframeTime >= currentTime)
 						{
 							nextKeyframe = KeyframesOnPrefab[j];
 							break;
@@ -131,8 +133,8 @@ public class LightProperties : MonoBehaviour
 
 			if (LightsOnPrefab.Length > 0)
 			{
-				currentKeyframe.KeyframeLight.intensity = Mathf.Lerp(currentKeyframe.KeyframeIntensity, nextKeyframe.KeyframeIntensity, t);
-				currentKeyframe.KeyframeLight.color = Color.Lerp(currentKeyframe.KeyframeColor, nextKeyframe.KeyframeColor, t);
+				LightsOnPrefab[currentKeyframe.KeyframeLightIndex].intensity = Mathf.Lerp(currentKeyframe.KeyframeIntensity, nextKeyframe.KeyframeIntensity, t);
+				LightsOnPrefab[currentKeyframe.KeyframeLightIndex].color = Color.Lerp(currentKeyframe.KeyframeColor, nextKeyframe.KeyframeColor, t);
 			}
 			else
 			{
@@ -180,11 +182,11 @@ public class LightProperties : MonoBehaviour
 	{
 		if (SelectedLight != null)
 		{
-			SelectedLight.intensity = evt.newValue;
+			SelectedLight.intensity = evt.newValue * 1000;
 		}
 		else if (LightMaterial != null)
 		{
-			Color finalColor = LightMaterial.GetColor("_EmissionColor") * evt.newValue;
+			Color finalColor = LightMaterial.GetColor("_EmissionColor") * (evt.newValue * 8);
 			LightMaterial.SetColor("_EmissionColor", finalColor);
 		}
 	}

@@ -11,8 +11,12 @@
             <engine:Button text="Red laser" name="Item4Button" style="width: 200px; font-size: 33px;" />
             <engine:Button text="Three light" name="Item5Button" style="width: 200px; font-size: 33px;" />
             <engine:Button text="Discoball" name="Item6Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="Purple fire" name="Item7Button" style="width: 200px; font-size: 33px;" />
-            <engine:Button text="blank" name="Item8Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
+            <engine:Button text="Blue fire" name="Item7Button" style="width: 200px; font-size: 33px;" />
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 0; height: auto; width: auto; flex-direction: column; flex-shrink: 1; align-items: auto; justify-content: flex-start; align-self: flex-start;">
+            <engine:Button text="Green Fire" name="Item8Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
+            <engine:Button text="Purple Fire" name="Item9Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
+            <engine:Button text="Red Fire" name="Item10Button" style="width: 200px; font-size: 33px; margin-top: 2px; padding-top: 10px;" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

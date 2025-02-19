@@ -4,7 +4,7 @@ using UnityEngine;
 public class KeyframeClass
 {
 	public float KeyframeTime;
-	public Light KeyframeLight;
+	public int KeyframeLightIndex;
 
 	public Vector3 KeyframePosition;
 	public Quaternion KeyframeRotation;
@@ -20,10 +20,10 @@ public class KeyframeClass
 	public bool KeyframeIsAnimating;
 
 	// if prefab has a light to change and not a texture
-	public KeyframeClass(float time, Light light, Vector3 position, Quaternion rotation, float intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
+	public KeyframeClass(float time, int lightIndex, Vector3 position, Quaternion rotation, float intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
 	{
 		KeyframeTime = time;
-		KeyframeLight = light;
+		KeyframeLightIndex = lightIndex;
 
 		KeyframePosition = position;
 		KeyframeRotation = rotation;
@@ -43,7 +43,7 @@ public class KeyframeClass
 	public KeyframeClass(float time, Vector3 position, Quaternion rotation, Color intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
 	{
 		KeyframeTime = time;
-		KeyframeLight = null;
+		KeyframeLightIndex = -1;
 
 		KeyframePosition = position;
 		KeyframeRotation = rotation;

@@ -1,4 +1,5 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=b19eab582283e574b808dbbbf33927f8&amp;type=3#test" />
     <engine:VisualElement name="Root" style="flex-grow: 1;">
         <engine:VisualElement style="flex-grow: 1; height: 90%; flex-direction: row;">
             <engine:VisualElement style="flex-grow: 1;">
@@ -15,7 +16,7 @@
         <engine:VisualElement name="MusicHudRoot" style="flex-grow: 1; flex-direction: row; flex-shrink: 0; align-items: center; justify-content: center; margin-left: 10px; margin-right: 10px; margin-bottom: 10px;">
             <engine:Button text="⏯️" name="PlayPauseMusicHudButton" style="font-size: 25px;" />
             <engine:Label text="0:00" style="align-items: center; justify-content: flex-end; -unity-text-align: middle-center; color: rgb(255, 255, 255);" />
-            <engine:Slider value="42" high-value="100" fill="true" show-input-field="true" name="SongProgressSliderHud" style="flex-grow: 1; flex-shrink: 1; height: 45px;" />
+            <engine:Slider value="0" high-value="100" fill="true" show-input-field="true" name="SongProgressSliderHud" style="flex-grow: 1; flex-shrink: 1; height: 45px;" />
             <engine:Label name="SongDurationIndicatorHud" style="-unity-text-align: middle-center; color: rgb(255, 255, 255);" />
         </engine:VisualElement>
     </engine:VisualElement>
