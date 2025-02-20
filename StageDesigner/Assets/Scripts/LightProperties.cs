@@ -205,6 +205,12 @@ public class LightProperties : MonoBehaviour
 	}
 
 	// todo: still needs to notify when position or rotation are changed
+
+	// todo: bands preference (ie use 4 smoke machines, 3 lasers, etc.)
+	// maybe band picks songs for tutorial
+	// campaign: track band preference instead of crowd + budget
+	// sandbox: same ol
+
 	public void NotifyOfValueChange()
 	{
 		UIManager um = FindFirstObjectByType<UIManager>();
