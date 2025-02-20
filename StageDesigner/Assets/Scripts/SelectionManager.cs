@@ -65,15 +65,21 @@ public class SelectionManager : MonoBehaviour
 			GameObject hitObject = hit.collider.gameObject;
 			if (hitObject.CompareTag("LightInScene") || hitObject.CompareTag("SelectableLightingPrefab"))
 			{
-				ClearSelection();
+				if (SelectedObject != null)
+				{
+					FindFirstObjectByType<UIManager>().ShowKeyframeToasts("Please deselect item first", 1f);
+					return;
+				}
+				//ClearSelection();
 				SelectedObject = hitObject;
 				UpdateSelectedLightProperties();
 
 				SelectedItemStorageMat = SelectedObject.GetComponentInChildren<Renderer>().material;
 				SelectedObject.GetComponentInChildren<Renderer>().material = SelectionMat;
 
-				MoveGizmoPrefab.GetComponent<GizmoController>().m_targetObject = SelectedObject;
+				//MoveGizmoPrefab.GetComponent<GizmoController>().m_targetObject = SelectedObject;
 				Gizmo = Instantiate(MoveGizmoPrefab);
+				Gizmo.GetComponent<GizmoController>().m_targetObject = SelectedObject;
 				Gizmo.transform.position = SelectedObject.transform.position;
 
 				//if (ActiveGizmo != null) Destroy(ActiveGizmo);
@@ -98,13 +104,12 @@ public class SelectionManager : MonoBehaviour
 	{
 		if (SelectedObject != null)
 		{
+			if (Gizmo != null) Destroy(Gizmo);
 			if (CurrentLightProperties != null) CurrentLightProperties.RemoveListeners();
 			CurrentLightProperties = null;
 			SelectedObject.GetComponentInChildren<Renderer>().material = SelectedItemStorageMat;
 			SelectedItemStorageMat = null;
 			SelectedObject = null;
-
-			if (Gizmo != null) Destroy(Gizmo);
 		}
 	}
 

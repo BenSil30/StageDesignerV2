@@ -46,10 +46,6 @@ public class LightProperties : MonoBehaviour
 	private void Update()
 	{
 		StrobeLight();
-
-		// only update if on main menu and animation panel is NOT visible
-		// todo: this doesn't update when dragging the timeline because it's being skipped
-		if (FindFirstObjectByType<UIManager>().HUDVisible && !FindFirstObjectByType<UIManager>().AnimationPanelVisible && Input.GetMouseButton(1)) UpdateKeyframes();
 	}
 
 	public void AddKeyframe(float time)
@@ -93,10 +89,10 @@ public class LightProperties : MonoBehaviour
 		}
 		UIManager um = FindFirstObjectByType<UIManager>();
 		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
-		Button keyframeButton = root.Q<Button>("AddKeyframeButton");
+		Button keyframeButton = root.Q<Button>("AddKeyframeAnimationPanelButton");
 
 		// turn the background of the button a light orange
-		keyframeButton.style.backgroundColor = new StyleColor(new Color(188f, 188f, 188f, 1f));
+		keyframeButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
 		// log with all keyframe added info
 		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {SelectedLight.intensity} - Color: {SelectedLight.color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
 	}
@@ -117,7 +113,7 @@ public class LightProperties : MonoBehaviour
 		KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 	}
 
-	public void UpdateKeyframes()
+	public void AnimateKeyframes()
 	{
 		if (KeyframesOnPrefab.Count < 0) return;
 		float currentTime = FindFirstObjectByType<UIManager>().TimelineSlider.value;
@@ -216,14 +212,14 @@ public class LightProperties : MonoBehaviour
 		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
 		Button keyframeButton = root.Q<Button>("AddKeyframeAnimationPanelButton");
 		// turn the background of the button a light orange
-		keyframeButton.style.backgroundColor = new StyleColor(new Color(238f, 119f, 43f, 1f));
+		keyframeButton.style.backgroundColor = new StyleColor(new Color(0.9320754f, 0.6493151f, 0.3288643f, 1f));
 	}
 
 	public void IntensityUpdated(ChangeEvent<float> evt)
 	{
 		if (SelectedLight != null)
 		{
-			SelectedLight.intensity = evt.newValue * 1000;
+			SelectedLight.intensity = evt.newValue * 10000;
 		}
 		else if (LightMaterial != null)
 		{

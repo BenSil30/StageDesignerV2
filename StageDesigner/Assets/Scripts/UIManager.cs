@@ -184,17 +184,15 @@ public class UIManager : MonoBehaviour
 			if (AudioSource.clip != null)
 			{
 				if (!AudioSource.isPlaying) AudioSource.time = evt.newValue;
-				if (sm.CurrentLightProperties != null) sm.CurrentLightProperties.UpdateKeyframes();
-				_addKeyframeButton.style.backgroundColor = new StyleColor(new Color(188f, 188f, 188f, 1f));
+				FindFirstObjectByType<ItemManager>().AnimateAllKeyframes();
+				AddKeyframeAnimationButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
+				//_addKeyframeButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
 			}
 		});
-		// when dragging the slider, subscibe a method
+		//when dragging the slider, subscibe a method
 		TimelineSlider.RegisterCallback<MouseDownEvent>(evt =>
 		{
-			if (sm.SelectedObject != null)
-			{
-				sm.CurrentLightProperties.UpdateKeyframes();
-			}
+			FindFirstObjectByType<ItemManager>().AnimateAllKeyframes();
 		});
 
 		#endregion HUD UI elements
@@ -393,7 +391,8 @@ public class UIManager : MonoBehaviour
 	public void ShowKeyframeToasts(string msg, float duration)
 	{
 		Label toastLabel = new Label(msg);
-		VisualElement root = HUDDoc.rootVisualElement;
+		VisualElement HUDroot = HUDDoc.rootVisualElement;
+		VisualElement AnimationRoot = LightsAnimationDoc.rootVisualElement;
 		toastLabel.style.position = Position.Absolute;
 		toastLabel.style.top = 20;
 		toastLabel.style.left = 50;
@@ -411,8 +410,16 @@ public class UIManager : MonoBehaviour
 		toastLabel.style.paddingTop = 5;
 		toastLabel.style.paddingBottom = 5;
 
-		root.Add(toastLabel);
-		StartCoroutine(FadeOutAndRemove(toastLabel, duration, root));
+		if (HUDVisible)
+		{
+			HUDroot.Add(toastLabel);
+			StartCoroutine(FadeOutAndRemove(toastLabel, duration, HUDroot));
+		}
+		else if (AnimationPanelVisible)
+		{
+			AnimationRoot.Add(toastLabel);
+			StartCoroutine(FadeOutAndRemove(toastLabel, duration, AnimationRoot));
+		}
 	}
 
 	private IEnumerator FadeOutAndRemove(Label toastLabel, float duration, VisualElement root)
@@ -479,7 +486,7 @@ public class UIManager : MonoBehaviour
 	{
 		AudioSource.time = time;
 		TimelineSlider.value = time;
-		sm.CurrentLightProperties.UpdateKeyframes();
+		FindFirstObjectByType<ItemManager>().AnimateAllKeyframes();
 	}
 
 	#endregion Keyframe Methods

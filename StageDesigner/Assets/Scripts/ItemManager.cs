@@ -21,6 +21,31 @@ public class ItemManager : MonoBehaviour
 	public float StartingBudget;
 	public float RemainingBudget;
 
+	private void Update()
+	{
+		// if the hud is visible and NOT the animatin pane, and the user is not dragging an item, animate every spawned object
+		AnimateAllKeyframes();
+	}
+
+	public void AnimateAllKeyframes()
+	{
+		if (FindFirstObjectByType<UIManager>().HUDVisible
+					&& !FindFirstObjectByType<UIManager>().AnimationPanelVisible
+					&& !Input.GetMouseButton(1)
+					&& SpawnedItems.Count > 0)
+		{
+			foreach (var item in SpawnedItems)
+			{
+				LightProperties lp = item.GetComponent<LightProperties>();
+				if (lp != null)
+				{
+					lp.AnimateKeyframes();
+					Debug.Log("keyframe animated");
+				}
+			}
+		}
+	}
+
 	public void SpawnItem(string itemName)
 	{
 		GameObject selectedItem;

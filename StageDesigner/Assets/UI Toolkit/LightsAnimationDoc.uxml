@@ -11,7 +11,7 @@
             <engine:Slider label="Blue" value="42" high-value="255" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
             <engine:Slider label="Pulse Rate" value="0" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
             <engine:Slider label="Rot Speed" value="0" high-value="100" name="RotSpeedSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
-            <engine:Button text="Add Keyframe" name="AddKeyframeAnimationPanelButton" style="font-size: 24px;" />
+            <engine:Button text="Add Keyframe" name="AddKeyframeAnimationPanelButton" style="font-size: 24px; background-color: rgb(188, 188, 188);" />
         </engine:VisualElement>
         <engine:VisualElement style="flex-grow: 1; align-items: flex-end;">
             <engine:ScrollView name="KeyframeVisualList" />
