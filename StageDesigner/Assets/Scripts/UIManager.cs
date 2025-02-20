@@ -491,6 +491,7 @@ public class UIManager : MonoBehaviour
 
 	#endregion Keyframe Methods
 
+	// todo: clean this shit up
 	public void TogglePanelVisibility(string panelName)
 	{
 		if (MusicIsPlaying & panelName != "ItemsPanel")

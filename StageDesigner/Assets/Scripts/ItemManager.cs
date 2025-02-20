@@ -40,7 +40,6 @@ public class ItemManager : MonoBehaviour
 				if (lp != null)
 				{
 					lp.AnimateKeyframes();
-					Debug.Log("keyframe animated");
 				}
 			}
 		}
