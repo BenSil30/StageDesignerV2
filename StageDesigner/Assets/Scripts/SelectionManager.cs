@@ -67,7 +67,7 @@ public class SelectionManager : MonoBehaviour
 			{
 				if (SelectedObject != null)
 				{
-					FindFirstObjectByType<UIManager>().ShowKeyframeToasts("Please deselect item first", 1f);
+					FindFirstObjectByType<UIManager>().ShowToastNotification("Please deselect item first", 1f);
 					return;
 				}
 				//ClearSelection();

@@ -547,6 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UIManager: {fileID: 0}
   KeyframesOnPrefab: []
+  ItemCost: 100
   LightsOnPrefab:
   - {fileID: 8363895300746993092}
   - {fileID: 6467709217592110937}
@@ -558,6 +559,7 @@ MonoBehaviour:
   PulseRate: 0
   PulseOn: 0
   IsAnimating: 0
+  IsANonLightPrefab: 0
 --- !u!136 &4932013097146573441
 CapsuleCollider:
   m_ObjectHideFlags: 0

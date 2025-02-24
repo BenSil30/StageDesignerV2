@@ -16,10 +16,7 @@ public class ItemManager : MonoBehaviour
 	public List<GameObject> AvailableItems = new List<GameObject>();
 	public List<GameObject> SpawnedItems = new List<GameObject>();
 	public GameObject SpawnPoint;
-
-	public bool BudgetEnabled;
-	public float StartingBudget;
-	public float RemainingBudget;
+	public BudgetController BudgetController;
 
 	private void Update()
 	{
@@ -51,6 +48,19 @@ public class ItemManager : MonoBehaviour
 		GameObject newLight;
 
 		selectedItem = AvailableItems.Find(x => x.name == itemName);
+		if (!BudgetController.SandboxModeEnabled)
+		{
+			if (!BudgetController.CheckForBudgetSpace(selectedItem.GetComponent<LightProperties>().ItemCost))
+			{
+				FindFirstObjectByType<UIManager>().ShowToastNotification("Not enough budget remaining", 1f);
+				return;
+			}
+			else
+			{
+				FindFirstObjectByType<UIManager>().ShowToastNotification($"Item spawned, remaining budget {BudgetController.RemainingBudget}", 1f);
+			}
+		}
+
 		newLight = Instantiate(selectedItem, SpawnPoint.transform.position, Quaternion.identity);
 		newLight.tag = "LightInScene";
 		SpawnedItems.Add(newLight);
@@ -71,9 +81,10 @@ public class ItemManager : MonoBehaviour
 		public int Stage;
 		public string SongName;
 		public float SongLength;
+		public bool SandboxModeEnabled;
 	}
 
-	// todo: add stage selection and maybe music file to export
+	// todo: add stage selection, campaign/sandbox info to load/save
 	public void ExportAllKeyframes()
 	{
 		string filePath = GetSaveFilePath("Save Keyframes", "json");
@@ -102,6 +113,7 @@ public class ItemManager : MonoBehaviour
 		}
 		keyframeCollection.Stage = FindFirstObjectByType<StageManager>().currentStage;
 		keyframeCollection.SongLength = FindFirstObjectByType<AudioSource>().clip.length;
+		keyframeCollection.SandboxModeEnabled = BudgetController.SandboxModeEnabled;
 
 		string json = JsonUtility.ToJson(keyframeCollection, true); Debug.Log(json);
 		File.WriteAllText(filePath, json);
@@ -131,7 +143,6 @@ public class ItemManager : MonoBehaviour
 			string lightName = lightData.LightName;
 			lightName = Regex.Replace(lightName, @"\d", "");
 			lightName = lightName.Trim();
-			Debug.Log(lightName);
 			// find the object with lightname in the list of available objects and spawn it as newLight
 			GameObject newLight = AvailableItems.Find(x => x.name == lightName);
 			// log the object found
@@ -144,7 +155,10 @@ public class ItemManager : MonoBehaviour
 			{
 				lightProperties.KeyframesOnPrefab = lightData.Keyframes;
 			}
+			SpawnedItems.Add(newLight);
+			FindFirstObjectByType<BudgetController>().UpdateBudgetOnLoad();
 		}
+
 		StageManager stageManager = FindFirstObjectByType<StageManager>();
 		switch (stageIndex)
 		{
@@ -159,8 +173,12 @@ public class ItemManager : MonoBehaviour
 			FindFirstObjectByType<UIManager>().TimelineSlider.highValue = songLength;
 		}
 
-		Debug.Log("Keyframes imported successfully!");
+		BudgetController.SandboxModeEnabled = keyframeCollection.SandboxModeEnabled;
+
+		Debug.Log("Imported successful");
+
 		FindFirstObjectByType<UIManager>().TogglePanelVisibility("AllOff");
+		FindFirstObjectByType<UIManager>().StartClicked = true;
 	}
 
 	private string GetSaveFilePath(string title, string extension)

@@ -4863,6 +4863,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2193856034848901639}
+  - component: {fileID: 5939944473841125069}
   m_Layer: 0
   m_Name: Purple Fire
   m_TagString: Untagged
@@ -4888,6 +4889,32 @@ Transform:
   - {fileID: 8880883095079630748}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5939944473841125069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3463191010386273494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525e015d7c29e594b9ba94b40ef163e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIManager: {fileID: 0}
+  KeyframesOnPrefab: []
+  ItemCost: 300
+  LightsOnPrefab:
+  - {fileID: 7877379821179103707}
+  SelectedLight: {fileID: 0}
+  CurrentLightIndex: 0
+  LightMaterial: {fileID: 0}
+  RotationSpeed: 0
+  PulseTimer: 0
+  PulseRate: 0
+  PulseOn: 0
+  IsAnimating: 0
+  IsANonLightPrefab: 0
 --- !u!1 &4936666240680046504
 GameObject:
   m_ObjectHideFlags: 0

@@ -335,6 +335,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5647007555398069491}
+  - component: {fileID: 6728378823150503787}
   m_Layer: 0
   m_Name: Green Fire
   m_TagString: Untagged
@@ -360,6 +361,32 @@ Transform:
   - {fileID: 6191253340240599237}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6728378823150503787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5248328971037583572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525e015d7c29e594b9ba94b40ef163e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIManager: {fileID: 0}
+  KeyframesOnPrefab: []
+  ItemCost: 300
+  LightsOnPrefab:
+  - {fileID: 7257338049352562763}
+  SelectedLight: {fileID: 0}
+  CurrentLightIndex: 0
+  LightMaterial: {fileID: 0}
+  RotationSpeed: 0
+  PulseTimer: 0
+  PulseRate: 0
+  PulseOn: 0
+  IsAnimating: 0
+  IsANonLightPrefab: 0
 --- !u!1 &7853274025475931099
 GameObject:
   m_ObjectHideFlags: 0

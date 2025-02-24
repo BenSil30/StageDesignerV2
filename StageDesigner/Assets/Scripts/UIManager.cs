@@ -11,6 +11,7 @@ using UnityEngine.UIElements;
 public class UIManager : MonoBehaviour
 {
 	public SelectionManager sm;
+	public BudgetController bc;
 
 	public UIDocument HUDDoc;
 	public UIDocument ItemsPanelDoc;
@@ -52,13 +53,15 @@ public class UIManager : MonoBehaviour
 	#region Items UI Elements
 
 	private Button _backButtonItems;
+	public Label BudgetLabel;
 
 	#endregion Items UI Elements
 
 	#region Start UI Elements
 
-	private Button _startButton;
-	private bool _startClicked = false;
+	private Button _playCampaignButton;
+	private Button _playSandboxButton;
+	public bool StartClicked = false;
 
 	private Button _graphicsSettignsButtonP;
 	private Button _exportButtonP;
@@ -208,14 +211,16 @@ public class UIManager : MonoBehaviour
 			string name = im.AvailableItems[i].name;
 			var newButton = new Button(() => ItemSelectedFromPanel(name))
 			{
-				text = name
+				// todo don't add price to button name if sandbox mode is enabled
+				text = $"{name} - ${im.AvailableItems[i].GetComponent<LightProperties>().ItemCost}"
 			};
 			// change the size of newButton to be 200px wide with a font size of 32
 			newButton.style.fontSize = 32;
-			newButton.style.width = 200;
+			newButton.style.width = 250;
 			ButtonsRoot.Add(newButton);
 		}
 
+		BudgetLabel = HUDDoc.rootVisualElement.Q<Label>("BudgetLabel");
 		_backButtonItems.clicked += () => TogglePanelVisibility("AllOff");
 
 		#endregion Items UI elements
@@ -223,12 +228,18 @@ public class UIManager : MonoBehaviour
 		#region Start UI Elements
 
 		VisualElement PauseStartRoot = StartMenuDoc.rootVisualElement;
-		_startButton = PauseStartRoot.Q<Button>("PlayButton");
+		_playCampaignButton = PauseStartRoot.Q<Button>("PlayCampaignButton");
+		_playSandboxButton = PauseStartRoot.Q<Button>("PlaySandboxButton");
 		_graphicsSettignsButtonP = PauseStartRoot.Q<Button>("GraphicsSettingsButton");
 		_exportButtonP = PauseStartRoot.Q<Button>("ExportButton");
 		_importButtonP = PauseStartRoot.Q<Button>("ImportButton");
 
-		_startButton.clicked += () => TogglePanelVisibility("MusicUploaderStartMenu");
+		_playCampaignButton.clicked += () => TogglePanelVisibility("MusicUploaderStartMenu");
+		_playCampaignButton.clicked += () => bc.SandboxModeEnabled = false;
+
+		_playSandboxButton.clicked += () => TogglePanelVisibility("MusicUploaderStartMenu");
+		_playSandboxButton.clicked += () => bc.SandboxModeEnabled = true;
+
 		_graphicsSettignsButtonP.clicked += () => TogglePanelVisibility("GraphicsSettings");
 		_exportButtonP.clicked += FindFirstObjectByType<ItemManager>().ExportAllKeyframes;
 		_importButtonP.clicked += FindFirstObjectByType<ItemManager>().ImportKeyframes;
@@ -247,8 +258,8 @@ public class UIManager : MonoBehaviour
 		_goToSelectStageFromMusicUploader.clicked += () => TogglePanelVisibility("StageSelection");
 		_goToSelectStageFromMusicUploader.clicked += () =>
 		{
-			if (!_startClicked)
-				_startClicked = true;
+			if (!StartClicked)
+				StartClicked = true;
 		};
 		_goBackToStartFromMusicUploader.clicked += () => TogglePanelVisibility("PauseStart");
 
@@ -340,11 +351,23 @@ public class UIManager : MonoBehaviour
 		{
 			TogglePanelVisibility("AllOff");
 		}
-		if (_startClicked)
+		// change start/pause menu to account for sandbox/campaign mode resumption
+		if (StartClicked)
 		{
-			_startButton.text = "Resume";
-			_startButton.clicked -= () => TogglePanelVisibility("MusicUploaderStartMenu");
-			_startButton.clicked += () => TogglePanelVisibility("AllOff");
+			if (!bc.SandboxModeEnabled)
+			{
+				_playCampaignButton.text = "Resume Campaign";
+				_playCampaignButton.clicked -= () => TogglePanelVisibility("MusicUploaderStartMenu");
+				_playCampaignButton.clicked += () => TogglePanelVisibility("AllOff");
+				_playSandboxButton.style.display = DisplayStyle.None;
+			}
+			else
+			{
+				_playSandboxButton.text = "Resume Sandbox";
+				_playSandboxButton.clicked -= () => TogglePanelVisibility("MusicUploaderStartMenu");
+				_playSandboxButton.clicked += () => TogglePanelVisibility("AllOff");
+				_playCampaignButton.style.display = DisplayStyle.None;
+			}
 		}
 		// hide add keyframe button if nothing selected
 		if (sm.SelectedObject == null || !HUDVisible)
@@ -374,6 +397,17 @@ public class UIManager : MonoBehaviour
 				TimelineSlider.value = AudioSource.time;
 			}
 		}
+
+		if (bc.SandboxModeEnabled)
+		{
+			BudgetLabel.style.visibility = Visibility.Hidden;
+			BudgetLabel.focusable = false;
+			BudgetLabel.style.display = DisplayStyle.None;
+		}
+		else
+		{
+			BudgetLabel.text = $"Remaining Budget: ${bc.RemainingBudget}";
+		}
 	}
 
 	#region Keyframe Methods
@@ -384,11 +418,11 @@ public class UIManager : MonoBehaviour
 		{
 			sm.CurrentLightProperties.AddKeyframe(TimelineSlider.value);
 		}
-		ShowKeyframeToasts("Keyframe Added", 1f);
+		ShowToastNotification("Keyframe Added", 1f);
 		RefreshKeyframeList();
 	}
 
-	public void ShowKeyframeToasts(string msg, float duration)
+	public void ShowToastNotification(string msg, float duration)
 	{
 		Label toastLabel = new Label(msg);
 		VisualElement HUDroot = HUDDoc.rootVisualElement;
@@ -478,7 +512,7 @@ public class UIManager : MonoBehaviour
 		{
 			sm.CurrentLightProperties.DeleteKeyframe(time);
 		}
-		ShowKeyframeToasts($"Keyframe Deleted at {time}", 1f);
+		ShowToastNotification($"Keyframe Deleted at {time}", 1f);
 		RefreshKeyframeList();
 	}
 

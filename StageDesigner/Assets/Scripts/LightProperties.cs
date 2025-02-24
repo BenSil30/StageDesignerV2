@@ -12,6 +12,9 @@ public class LightProperties : MonoBehaviour
 	public UIManager UIManager;
 	public List<KeyframeClass> KeyframesOnPrefab = new List<KeyframeClass>(); // Holds keyframes for this light
 
+	// todo make sure prefabs have item cost set
+	public float ItemCost;
+
 	public Light[] LightsOnPrefab;
 	public Light SelectedLight = null;
 	public int CurrentLightIndex;
@@ -32,10 +35,9 @@ public class LightProperties : MonoBehaviour
 
 	// todo: do light selection within prefabs that have multiple lights, has to add a new button to the UI for it
 
-	// Start is called once before the first execution of Update after the MonoBehaviour is created
 	private void Start()
 	{
-		UIManager = GameObject.Find("UI").GetComponent<UIManager>();
+		UIManager = FindFirstObjectByType<UIManager>();
 		if (LightsOnPrefab.Length > 0)
 		{
 			SelectedLight = LightsOnPrefab[0];
@@ -102,7 +104,7 @@ public class LightProperties : MonoBehaviour
 		KeyframeClass keyframeToUpdate = KeyframesOnPrefab.Find(x => x.KeyframeTime == time);
 		DeleteKeyframe(time);
 		AddKeyframe(time);
-		FindFirstObjectByType<UIManager>().ShowKeyframeToasts("Keyframe Updated", 1f);
+		FindFirstObjectByType<UIManager>().ShowToastNotification("Keyframe Updated", 1f);
 		KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 	}
 
@@ -205,16 +207,10 @@ public class LightProperties : MonoBehaviour
 	}
 
 	// todo: still needs to notify when position or rotation are changed
-
-	// todo: bands preference (ie use 4 smoke machines, 3 lasers, etc.)
-	// maybe band picks songs for tutorial
-	// campaign: track band preference instead of crowd + budget
-	// sandbox: same ol
-
 	public void NotifyOfValueChange()
 	{
 		UIManager um = FindFirstObjectByType<UIManager>();
-		um.ShowKeyframeToasts("Value Changed", 1f);
+		um.ShowToastNotification("Value Changed", 1f);
 		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
 		Button keyframeButton = root.Q<Button>("AddKeyframeAnimationPanelButton");
 		// turn the background of the button a light orange

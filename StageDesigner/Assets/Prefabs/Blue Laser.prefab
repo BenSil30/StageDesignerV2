@@ -125,12 +125,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UIManager: {fileID: 0}
   KeyframesOnPrefab: []
+  ItemCost: 200
   LightsOnPrefab: []
   SelectedLight: {fileID: 0}
   CurrentLightIndex: 0
-  LightMaterial: {fileID: 0}
+  LightMaterial: {fileID: 2100000, guid: 07c320a232cd2ec4eac5154b9507befb, type: 2}
   RotationSpeed: 0
   PulseTimer: 0
   PulseRate: 0
   PulseOn: 0
   IsAnimating: 0
+  IsANonLightPrefab: 0

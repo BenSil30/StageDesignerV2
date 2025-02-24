@@ -357,6 +357,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2883686868551956934}
+  - component: {fileID: -4102729044016834176}
   m_Layer: 0
   m_Name: Blue Fire
   m_TagString: Untagged
@@ -382,6 +383,32 @@ Transform:
   - {fileID: 8319780319996697388}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4102729044016834176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6700624234296610125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525e015d7c29e594b9ba94b40ef163e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIManager: {fileID: 0}
+  KeyframesOnPrefab: []
+  ItemCost: 300
+  LightsOnPrefab:
+  - {fileID: 1330389445462997711}
+  SelectedLight: {fileID: 0}
+  CurrentLightIndex: 0
+  LightMaterial: {fileID: 0}
+  RotationSpeed: 0
+  PulseTimer: 0
+  PulseRate: 0
+  PulseOn: 0
+  IsAnimating: 0
+  IsANonLightPrefab: 0
 --- !u!1 &8946934765474550885
 GameObject:
   m_ObjectHideFlags: 0
