@@ -44,9 +44,9 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 0.9433962, g: 0.76353365, b: 0.0658597, a: 1}
-  m_Intensity: 49965.906
+  m_Intensity: 41343.76
   m_Range: 3.14
-  m_SpotAngle: 30
+  m_SpotAngle: 33
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -117,10 +117,10 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 0
+  m_InnerSpotPercent: 100
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 1
+  m_VolumetricDimmer: 5
   m_FadeDistance: 10000
   m_VolumetricFadeDistance: 10000
   m_AffectDiffuse: 1
@@ -284,9 +284,9 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 0.079370975, g: 0.030259816, b: 0.9433962, a: 1}
-  m_Intensity: 89187.75
+  m_Intensity: 41343.76
   m_Range: 3.06
-  m_SpotAngle: 30
+  m_SpotAngle: 33
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -357,10 +357,10 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 0
+  m_InnerSpotPercent: 100
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 1
+  m_VolumetricDimmer: 5
   m_FadeDistance: 10000
   m_VolumetricFadeDistance: 10000
   m_AffectDiffuse: 1
@@ -696,9 +696,9 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 0.8490566, g: 0.107333556, b: 0.107333556, a: 1}
-  m_Intensity: 66308.26
+  m_Intensity: 41343.76
   m_Range: 2.5
-  m_SpotAngle: 30
+  m_SpotAngle: 33
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -769,10 +769,10 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 0
+  m_InnerSpotPercent: 100
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 1
-  m_VolumetricDimmer: 1
+  m_VolumetricDimmer: 5
   m_FadeDistance: 10000
   m_VolumetricFadeDistance: 10000
   m_AffectDiffuse: 1
@@ -971,7 +971,6 @@ MonoBehaviour:
   - {fileID: 7263324782488222590}
   - {fileID: 2558235305558757866}
   - {fileID: 5396355442284087923}
-  SelectedLight: {fileID: 0}
   CurrentLightIndex: 0
   LightMaterial: {fileID: 0}
   RotationSpeed: 0

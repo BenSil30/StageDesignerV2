@@ -2,8 +2,11 @@ using Ookii.Dialogs;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UIElements;
+using static KeyframeClass;
 using static UnityEngine.Rendering.DebugUI;
 using Button = UnityEngine.UIElements.Button;
 
@@ -13,11 +16,18 @@ public class LightProperties : MonoBehaviour
 	public ItemManager ItemManager;
 	public List<KeyframeClass> KeyframesOnPrefab = new List<KeyframeClass>(); // Holds keyframes for this light
 
+	private Vector3 lastPos;
+	private Vector3 lastRot;
+	private float lastIntensity;
+	private Color lastColor;
+	private float lastStrobeSpeed;
+
 	public float ItemCost;
 
 	public Light[] LightsOnPrefab;
-	public Light SelectedLight = null;
-	public int CurrentLightIndex;
+
+	//public Light SelectedLight = null;
+	//public int CurrentLightIndex;
 
 	public Material LightMaterial;
 	private Color _emissionColor;
@@ -38,13 +48,32 @@ public class LightProperties : MonoBehaviour
 		UIManager = FindFirstObjectByType<UIManager>();
 		ItemManager = FindFirstObjectByType<ItemManager>();
 		// todo: maybe just loop through all the lights
-		if (LightsOnPrefab.Length > 0)
-		{
-			SelectedLight = LightsOnPrefab[0];
-		}
-		else
+		//if (LightsOnPrefab.Length > 0)
+		//{
+		//	SelectedLight = LightsOnPrefab[0];
+		//}
+		if (LightsOnPrefab.Length < 0)
 		{
 			_emissionColor = LightMaterial.GetColor("_EmissionColor");
+		}
+		if (LightsOnPrefab.Length > 0)
+		{
+			foreach (var light in LightsOnPrefab)
+			{
+				if (light.name.Contains("Spot"))
+				{
+					var hd = light.GetComponent<HDAdditionalLightData>();
+					light.intensity = 600000;
+					light.innerSpotAngle = 30;
+					light.spotAngle = 40;
+					light.shadows = LightShadows.Soft;
+					hd.range = 100;
+					hd.shapeRadius = 0;
+					hd.volumetricDimmer = 6f;
+					hd.lightDimmer = 1f;
+					hd.fadeDistance = 100000;
+				}
+			}
 		}
 	}
 
@@ -61,26 +90,67 @@ public class LightProperties : MonoBehaviour
 			UpdateKeyframe(time);
 			return;
 		}
-		if (SelectedLight != null)
+		var keyframeType = KeyframeType.Multiple;
+		if (KeyframesOnPrefab.Count <= 0)
 		{
-			KeyframeClass newKeyframe = new KeyframeClass(
-				time,
-				CurrentLightIndex,
-				transform.position,
-				transform.rotation,
-				SelectedLight.intensity,
-				SelectedLight.color,
-				RotationSpeed,
-				PulseRate,
-				PulseOn,
-				IsAnimating);
-			KeyframesOnPrefab.Add(newKeyframe);
-			KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
+			if (LightsOnPrefab.Length > 0)
+			{
+				lastIntensity = LightsOnPrefab[0].intensity;
+				lastColor = LightsOnPrefab[0].color;
+			}
+			else
+			{
+				lastIntensity = LightMaterial.GetColor("_EmissionColor").maxColorComponent;
+				lastColor = LightMaterial.GetColor("_EmissionColor");
+			}
+			lastPos = transform.position;
+			lastRot = transform.rotation.eulerAngles;
+			lastStrobeSpeed = PulseRate;
+			keyframeType = KeyframeType.Multiple;
+		}
+		else
+		{
+			bool changedPosition = transform.position != lastPos;
+			bool changedRotation = transform.rotation.eulerAngles != lastRot;
+			bool changedIntensity = !Mathf.Approximately(LightsOnPrefab[0].intensity, lastIntensity);
+			bool changedColor = LightsOnPrefab[0].color != lastColor;
+			bool changedStrobe = !Mathf.Approximately(PulseRate, lastStrobeSpeed);
+
+			int changeCount = (changedIntensity ? 1 : 0) + (changedColor ? 1 : 0) +
+					  (changedStrobe ? 1 : 0) + (changedRotation ? 1 : 0);
+
+			if (changeCount > 1) keyframeType = KeyframeType.Multiple;
+			if (changedPosition) keyframeType = KeyframeType.Position;
+			if (changedRotation) keyframeType = KeyframeType.Rotation;
+			if (changedIntensity) keyframeType = KeyframeType.Intensity;
+			if (changedColor) keyframeType = KeyframeType.Color;
+			if (changedStrobe) keyframeType = KeyframeType.StrobeSpeed;
+		}
+		if (LightsOnPrefab.Length > 0)
+		{
+			for (int i = 0; i < LightsOnPrefab.Length; i++)
+			{
+				KeyframeClass newKeyframe = new KeyframeClass(
+					time,
+					keyframeType,
+					i,
+					transform.position,
+					transform.rotation,
+					LightsOnPrefab[0].intensity,
+					LightsOnPrefab[0].color,
+					RotationSpeed,
+					PulseRate,
+					PulseOn,
+					IsAnimating);
+				KeyframesOnPrefab.Add(newKeyframe);
+				KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
+			}
 		}
 		else
 		{
 			KeyframeClass newKeyframe = new KeyframeClass(
 				time,
+				keyframeType,
 				transform.position,
 				transform.rotation,
 				LightMaterial.GetColor("_EmissionColor"),
@@ -99,8 +169,8 @@ public class LightProperties : MonoBehaviour
 		// turn the background of the button a light orange
 		keyframeButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
 		// log with all keyframe added info
-		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {SelectedLight.intensity} - Color: {SelectedLight.color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
-		ItemManager.CheckForObjectiveCompletion();
+		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {LightsOnPrefab[0].intensity} - Color: {LightsOnPrefab[0].color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
+		if (!FindFirstObjectByType<BudgetController>().SandboxModeEnabled) ItemManager.CheckForObjectiveCompletion();
 	}
 
 	public void UpdateKeyframe(float time)
@@ -222,52 +292,65 @@ public class LightProperties : MonoBehaviour
 
 	public void IntensityUpdated(ChangeEvent<float> evt)
 	{
-		if (SelectedLight != null)
+		if (LightsOnPrefab.Length > 0)
 		{
-			SelectedLight.intensity = evt.newValue * 100000;
+			foreach (var light in LightsOnPrefab)
+			{
+				// map the new value to the range of 20,000 to 60,000
+				float intensity = Mathf.Lerp(20000f, 60000f, (evt.newValue - 1f) / 19f);
+				light.intensity = intensity;
+			}
+			//SelectedLight.intensity = evt.newValue * 100000;
 		}
 		else if (LightMaterial != null)
 		{
-			Color finalColor = LightMaterial.GetColor("_EmissionColor") * (evt.newValue * 800);
+			// map the new value to the range of 20 to 200
+			float intensity = 10 + ((evt.newValue - 1) * (200 - 10) / (20 - 1));
+			Color finalColor = LightMaterial.GetColor("_EmissionColor") * intensity;
 			LightMaterial.SetColor("_EmissionColor", finalColor);
 		}
-		ItemManager.CheckForObjectiveCompletion();
+		if (!FindFirstObjectByType<BudgetController>().SandboxModeEnabled) ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
 	public void LightColorUpdated(ChangeEvent<float> evt)
 	{
-		if (SelectedLight != null)
+		if (LightsOnPrefab.Length > 0)
 		{
-			Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value);
-			SelectedLight.color = lightColor;
+			foreach (var light in LightsOnPrefab)
+			{
+				Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value);
+				light.color = lightColor;
+			}
+			//Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value);
+			//SelectedLight.color = lightColor;
 		}
 		else if (LightMaterial != null)
 		{
 			Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value) * UIManager.IntensitySlider.value;
 			LightMaterial.SetColor("_EmissionColor", lightColor);
 		}
-		ItemManager.CheckForObjectiveCompletion();
+		if (!FindFirstObjectByType<BudgetController>().SandboxModeEnabled) ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
 	public void RotationSpeedUpdated(ChangeEvent<float> evt)
 	{
 		RotationSpeed = evt.newValue;
-		ItemManager.CheckForObjectiveCompletion();
+		if (!FindFirstObjectByType<BudgetController>().SandboxModeEnabled) ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
 	public void PulseRateUpdated(ChangeEvent<float> evt)
 	{
 		PulseRate = evt.newValue;
-		ItemManager.CheckForObjectiveCompletion();
+		if (!FindFirstObjectByType<BudgetController>().SandboxModeEnabled) ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
 	public void StrobeLight()
 	{
-		if (SelectedLight != null)
+		if (LightsOnPrefab.Length > 0)
 		{
 			if (PulseRate > 0)
 			{
@@ -275,14 +358,22 @@ public class LightProperties : MonoBehaviour
 				if (PulseTimer >= 1f / PulseRate)
 				{
 					PulseOn = !PulseOn;
-					SelectedLight.enabled = PulseOn;
+					foreach (var light in LightsOnPrefab)
+					{
+						light.enabled = PulseOn;
+					}
+					//SelectedLight.enabled = PulseOn;
 					PulseTimer = 0;
 				}
 			}
 			else
 			{
 				// Ensure the light stays on when the strobe is off
-				SelectedLight.enabled = true;
+				foreach (var light in LightsOnPrefab)
+				{
+					light.enabled = true;
+				}
+				//SelectedLight.enabled = true;
 			}
 		}
 		else if (LightMaterial != null)
@@ -352,16 +443,17 @@ public class LightProperties : MonoBehaviour
 	public void UpdateSliderValues()
 	{
 		// if prefab has actual lights
-		if (LightsOnPrefab.Length >= 0 & SelectedLight != null)
+		// you can use LightsOnPrefab[0] here because every light should be the same
+		if (LightsOnPrefab.Length > 0)
 		{
-			UIManager.IntensitySlider.value = SelectedLight.intensity;
+			UIManager.IntensitySlider.value = LightsOnPrefab[0].intensity;
 
 			// todo add range value to the UI
 			//UIManager._rangeSlider.value = SelectedLight.range;
 
-			UIManager.RedSlider.value = SelectedLight.color.r;
-			UIManager.GreenSlider.value = SelectedLight.color.g;
-			UIManager.BlueSlider.value = SelectedLight.color.b;
+			UIManager.RedSlider.value = LightsOnPrefab[0].color.r;
+			UIManager.GreenSlider.value = LightsOnPrefab[0].color.g;
+			UIManager.BlueSlider.value = LightsOnPrefab[0].color.b;
 
 			UIManager.RotSpeedSlider.value = RotationSpeed;
 			UIManager.PulseRateSlider.value = PulseRate;

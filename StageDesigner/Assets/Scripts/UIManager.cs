@@ -120,7 +120,7 @@ public class UIManager : MonoBehaviour
 	#region Animation settings UI Elements
 
 	public Label SelectedObjectTitle;
-	public Button NextLightButton;
+	//public Button NextLightButton;
 
 	public Slider IntensitySlider;
 
@@ -302,9 +302,9 @@ public class UIManager : MonoBehaviour
 		_ogdenStageButton.clicked += OgdenStageClicked;
 		_backButton.clicked += () => TogglePanelVisibility("PauseStart");
 
-		_defaultStageButton.clicked += InitializeCampaignManager;
-		_paramountStageButton.clicked += InitializeCampaignManager;
-		_ogdenStageButton.clicked += InitializeCampaignManager;
+		_defaultStageButton.clicked += () => { if (!bc.SandboxModeEnabled) { InitializeCampaignManager(); } };
+		_paramountStageButton.clicked += () => { if (!bc.SandboxModeEnabled) { InitializeCampaignManager(); } };
+		_ogdenStageButton.clicked += () => { if (!bc.SandboxModeEnabled) { InitializeCampaignManager(); } };
 		;
 
 		#endregion Stage Selection UI Elements
@@ -326,8 +326,8 @@ public class UIManager : MonoBehaviour
 		#region Animation settings UI Elements
 
 		VisualElement LightsAnimationRoot = LightsAnimationDoc.rootVisualElement;
-		NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
-		NextLightButton.clicked += NextLightButtonHit;
+		//NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
+		//NextLightButton.clicked += NextLightButtonHit;
 
 		IntensitySlider = LightsAnimationRoot.Q<Slider>("LightIntensitySlider");
 
@@ -552,29 +552,43 @@ public class UIManager : MonoBehaviour
 		{
 			foreach (var keyframe in sm.CurrentLightProperties.KeyframesOnPrefab)
 			{
-				// Create a label for each keyframe
-				// also show color and selected light index
-				var keyframeEntry = new VisualElement();
-				keyframeEntry.style.flexDirection = FlexDirection.Row;
-				keyframeEntry.AddToClassList("keyframe-entry");
-
-				var keyframeLabel = new Label($"Time: {keyframe.KeyframeTime} | Light #: {keyframe.KeyframeLightIndex} | Position: {keyframe.KeyframePosition} | Intensity: {keyframe.KeyframeIntensity}");
-				keyframeLabel.style.color = Color.white;
-				keyframeEntry.Add(keyframeLabel);
-
-				var jumpButton = new Button(() => JumpToKeyframe(keyframe.KeyframeTime))
+				if (keyframe.KeyframeLightIndex == 0)
 				{
-					text = "Jump"
-				};
-				var deleteButton = new Button(() => DeleteKeyframe(keyframe.KeyframeTime))
-				{
-					text = "Delete"
-				};
+					// Create a label for each keyframe
+					// also show color and selected light index
+					var keyframeEntry = new VisualElement();
+					keyframeEntry.style.flexDirection = FlexDirection.Row;
+					keyframeEntry.AddToClassList("keyframe-entry");
 
-				keyframeEntry.Add(jumpButton);
-				keyframeEntry.Add(deleteButton);
+					var keyframeLabel = new Label($"Time: {keyframe.KeyframeTime} | Type: {keyframe.KeyType}");
+					keyframeLabel.style.color = Color.white;
+					// give it a background and curved corners
+					keyframeLabel.style.backgroundColor = new Color(0, 0, 0, 0.5f);
+					keyframeLabel.style.paddingLeft = 10;
+					keyframeLabel.style.paddingRight = 10;
+					keyframeLabel.style.paddingTop = 5;
+					keyframeLabel.style.paddingBottom = 5;
+					keyframeLabel.style.borderBottomLeftRadius = 5;
+					keyframeLabel.style.borderBottomRightRadius = 5;
+					keyframeLabel.style.borderTopLeftRadius = 5;
+					keyframeLabel.style.borderTopRightRadius = 5;
 
-				KeyframeVisualList.Add(keyframeEntry);
+					keyframeEntry.Add(keyframeLabel);
+
+					var jumpButton = new Button(() => JumpToKeyframe(keyframe.KeyframeTime))
+					{
+						text = "Jump"
+					};
+					var deleteButton = new Button(() => DeleteKeyframe(keyframe.KeyframeTime))
+					{
+						text = "Delete"
+					};
+
+					keyframeEntry.Add(jumpButton);
+					keyframeEntry.Add(deleteButton);
+
+					KeyframeVisualList.Add(keyframeEntry);
+				}
 			}
 		}
 	}
@@ -757,26 +771,26 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	private void NextLightButtonHit()
-	{
-		if (sm.SelectedObject != null | sm.CurrentLightProperties.LightsOnPrefab.Length == 1)
-			return;
-		if (
-			sm.CurrentLightProperties.CurrentLightIndex
-			>= sm.CurrentLightProperties.LightsOnPrefab.Length - 1
-		)
-		{
-			sm.CurrentLightProperties.CurrentLightIndex = 0;
-		}
-		else
-		{
-			sm.CurrentLightProperties.CurrentLightIndex++;
-		}
-		sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[
-			sm.CurrentLightProperties.CurrentLightIndex
-		];
-		sm.CurrentLightProperties.UpdateSliderValues();
-	}
+	//private void NextLightButtonHit()
+	//{
+	//	if (sm.SelectedObject != null | sm.CurrentLightProperties.LightsOnPrefab.Length == 1)
+	//		return;
+	//	if (
+	//		sm.CurrentLightProperties.CurrentLightIndex
+	//		>= sm.CurrentLightProperties.LightsOnPrefab.Length - 1
+	//	)
+	//	{
+	//		sm.CurrentLightProperties.CurrentLightIndex = 0;
+	//	}
+	//	else
+	//	{
+	//		sm.CurrentLightProperties.CurrentLightIndex++;
+	//	}
+	//	sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[
+	//		sm.CurrentLightProperties.CurrentLightIndex
+	//	];
+	//	sm.CurrentLightProperties.UpdateSliderValues();
+	//}
 
 	#region Items Methods
 

@@ -285,9 +285,9 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 0.058490515, b: 0.058490515, a: 1}
-  m_Intensity: 89317.01
-  m_Range: 18.46
-  m_SpotAngle: 30
+  m_Intensity: 88579.99
+  m_Range: 100
+  m_SpotAngle: 43.709503
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -334,7 +334,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 12.3
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 0
   m_LuxAtDistance: 1
@@ -374,10 +374,10 @@ MonoBehaviour:
   m_LightUnit: 0
   m_LuxAtDistance: 1
   m_Intensity: 0
-  m_InnerSpotPercent: 0
+  m_InnerSpotPercent: 68.63497
   m_SpotIESCutoffPercent: 100
   m_LightDimmer: 5.92
-  m_VolumetricDimmer: 1
+  m_VolumetricDimmer: 5
   m_FadeDistance: 13047
   m_VolumetricFadeDistance: 10000
   m_AffectDiffuse: 1
@@ -386,7 +386,7 @@ MonoBehaviour:
   m_ShapeWidth: 0.5
   m_ShapeHeight: 0.5
   m_AspectRatio: 1
-  m_ShapeRadius: 12.3
+  m_ShapeRadius: 0
   m_SoftnessScale: 1
   m_UseCustomSpotLightShadowCone: 0
   m_CustomSpotLightShadowCone: 30
@@ -463,7 +463,7 @@ MonoBehaviour:
   m_RayTracedContactShadow: 0
   m_ShadowTint: {r: 0, g: 0, b: 0, a: 1}
   m_PenumbraTint: 0
-  m_NormalBias: 0.75
+  m_NormalBias: 0.1
   m_SlopeBias: 0.5
   m_ShadowUpdateMode: 0
   m_AlwaysDrawDynamicShadows: 0
@@ -546,12 +546,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIManager: {fileID: 0}
+  ItemManager: {fileID: 0}
   KeyframesOnPrefab: []
   ItemCost: 100
   LightsOnPrefab:
   - {fileID: 8363895300746993092}
   - {fileID: 6467709217592110937}
-  SelectedLight: {fileID: 0}
   CurrentLightIndex: 0
   LightMaterial: {fileID: 0}
   RotationSpeed: 0

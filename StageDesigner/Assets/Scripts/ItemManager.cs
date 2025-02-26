@@ -70,7 +70,7 @@ public class ItemManager : MonoBehaviour
 		newLight.name = itemName + " " + SpawnedItems.Count;
 
 		// check for campaign objectives
-		CheckForObjectiveCompletion();
+		if (!BudgetController.SandboxModeEnabled) CheckForObjectiveCompletion();
 	}
 
 	public void CheckForObjectiveCompletion()
@@ -381,7 +381,7 @@ public class ItemManager : MonoBehaviour
 		BudgetController.SandboxModeEnabled = keyframeCollection.SandboxModeEnabled;
 		CampaignController.CurrentLevel = keyframeCollection.CurrentLevel;
 		CampaignController.LoadLevel(CampaignController.CurrentLevel);
-		CheckForObjectiveCompletion();
+		if (!BudgetController.SandboxModeEnabled) CheckForObjectiveCompletion();
 
 		Debug.Log("Imported successful");
 

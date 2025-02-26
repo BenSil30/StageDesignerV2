@@ -30,11 +30,11 @@ public class SelectionManager : MonoBehaviour
 			SelectionLocked = true;
 		}
 
-		if (Input.GetKeyDown(KeyCode.C))
+		if (Input.GetKeyDown(KeyCode.C) && UImanager.HUDVisible)
 		{
 			ClearSelection();
 		}
-		if (Input.GetKeyDown(KeyCode.Backspace))
+		if (Input.GetKeyDown(KeyCode.Backspace) && UImanager.HUDVisible)
 		{
 			DeleteSelectedObject();
 		}
@@ -79,14 +79,14 @@ public class SelectionManager : MonoBehaviour
 				Gizmo.transform.localScale = Vector3.one;
 			}
 		}
-		if (CurrentLightProperties.LightsOnPrefab.Length > 0)
-		{
-			UImanager.LightsAnimationDoc.rootVisualElement.Q<Button>("NextLightButton").style.display = DisplayStyle.Flex;
-		}
-		else
-		{
-			UImanager.LightsAnimationDoc.rootVisualElement.Q<Button>("NextLightButton").style.display = DisplayStyle.None;
-		}
+		//if (CurrentLightProperties.LightsOnPrefab.Length > 0)
+		//{
+		//	UImanager.LightsAnimationDoc.rootVisualElement.Q<Button>("NextLightButton").style.display = DisplayStyle.Flex;
+		//}
+		//else
+		//{
+		//	UImanager.LightsAnimationDoc.rootVisualElement.Q<Button>("NextLightButton").style.display = DisplayStyle.None;
+		//}
 	}
 
 	private void DeleteSelectedObject()
@@ -95,8 +95,9 @@ public class SelectionManager : MonoBehaviour
 		{
 			ItemManager.SpawnedItems.Remove(SelectedObject);
 			Destroy(Gizmo);
-			Destroy(SelectedObject);
+			CurrentLightProperties.RemoveListeners();
 			CurrentLightProperties = null;
+			Destroy(SelectedObject);
 			SelectedItemStorageMat = null;
 			if (UImanager.AnimationPanelVisible)
 			{
@@ -126,9 +127,9 @@ public class SelectionManager : MonoBehaviour
 	{
 		if (SelectedObject == null) return;
 		CurrentLightProperties = SelectedObject.GetComponent<LightProperties>();
-		CurrentLightProperties.CurrentLightIndex = 0;
-		if (CurrentLightProperties.LightsOnPrefab.Length > 0)
-			CurrentLightProperties.SelectedLight = CurrentLightProperties.LightsOnPrefab[0];
+		//CurrentLightProperties.CurrentLightIndex = 0;
+		//if (CurrentLightProperties.LightsOnPrefab.Length > 0)
+		//	CurrentLightProperties.SelectedLight = CurrentLightProperties.LightsOnPrefab[0];
 		CurrentLightProperties.UpdateSliderValues();
 		CurrentLightProperties.AddListeners();
 		FindFirstObjectByType<UIManager>().RefreshKeyframeList();

@@ -3,7 +3,18 @@ using UnityEngine;
 [System.Serializable]
 public class KeyframeClass
 {
+	public enum KeyframeType
+	{
+		Position,
+		Rotation,
+		Intensity,
+		Color,
+		StrobeSpeed,
+		Multiple
+	}
+
 	public float KeyframeTime;
+	public KeyframeType KeyType;
 	public int KeyframeLightIndex;
 
 	public Vector3 KeyframePosition;
@@ -20,9 +31,10 @@ public class KeyframeClass
 	public bool KeyframeIsAnimating;
 
 	// if prefab has a light to change and not a texture
-	public KeyframeClass(float time, int lightIndex, Vector3 position, Quaternion rotation, float intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
+	public KeyframeClass(float time, KeyframeType type, int lightIndex, Vector3 position, Quaternion rotation, float intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
 	{
 		KeyframeTime = time;
+		KeyType = type;
 		KeyframeLightIndex = lightIndex;
 
 		KeyframePosition = position;
@@ -40,9 +52,10 @@ public class KeyframeClass
 	}
 
 	// if prefab doesn't have a light to change and instead uses a texture
-	public KeyframeClass(float time, Vector3 position, Quaternion rotation, Color intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
+	public KeyframeClass(float time, KeyframeType type, Vector3 position, Quaternion rotation, Color intensity, Color color, float keyframeRotationSpeed, float keyframePulseRate, bool keyframePulseOn, bool keyframeIsAnimating)
 	{
 		KeyframeTime = time;
+		KeyType = type;
 		KeyframeLightIndex = -1;
 
 		KeyframePosition = position;
