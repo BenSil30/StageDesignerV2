@@ -37,6 +37,7 @@ public class LightProperties : MonoBehaviour
 	{
 		UIManager = FindFirstObjectByType<UIManager>();
 		ItemManager = FindFirstObjectByType<ItemManager>();
+		// todo: maybe just loop through all the lights
 		if (LightsOnPrefab.Length > 0)
 		{
 			SelectedLight = LightsOnPrefab[0];
