@@ -1,9 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: center; display: flex;">
-        <engine:Button text="Play Campaign" name="PlayCampaignButton" style="justify-content: flex-end; width: 311px; height: 55px; font-size: 33px;" />
-        <engine:Button text="Play Sandbox" name="PlaySandboxButton" style="justify-content: flex-end; width: 311px; height: 55px; font-size: 33px;" />
+    <engine:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: center; display: flex; background-color: rgba(95, 92, 92, 0.53);">
+        <engine:Button text="Play Campaign" name="PlayCampaignButton" tooltip="Play with a budget and band members" style="justify-content: flex-end; width: 311px; height: 55px; font-size: 33px;" />
+        <engine:Button text="Play Sandbox" name="PlaySandboxButton" tooltip="Play with an unlimited budget" style="justify-content: flex-end; width: 311px; height: 55px; font-size: 33px;" />
         <engine:Button text="Graphics Settings" name="GraphicsSettingsButton" style="width: 311px; justify-content: flex-end; height: 55px; font-size: 33px;" />
-        <engine:Button text="Export" name="ExportButton" style="height: 55px; width: 171px; justify-content: flex-end; font-size: 33px;" />
-        <engine:Button text="Import" name="ImportButton" style="height: 55px; width: 171px; justify-content: flex-end; font-size: 33px;" />
+        <engine:Button text="Save" name="ExportButton" style="height: 55px; width: 171px; justify-content: flex-end; font-size: 33px;" />
+        <engine:Button text="Load" name="ImportButton" style="height: 55px; width: 171px; justify-content: flex-end; font-size: 33px;" />
     </engine:VisualElement>
 </engine:UXML>

@@ -1,6 +1,7 @@
 using System;
 using TransformGizmos;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -16,14 +17,15 @@ public class SelectionManager : MonoBehaviour
 
 	public LightProperties CurrentLightProperties;
 	public ItemManager ItemManager;
+	public UIManager UImanager;
 
 	private void Update()
 	{
-		if (FindAnyObjectByType<UIManager>().HUDVisible)
+		if (UImanager.HUDVisible)
 		{
 			SelectionLocked = false;
 		}
-		else if (!FindAnyObjectByType<UIManager>().HUDVisible)
+		else if (!UImanager.HUDVisible)
 		{
 			SelectionLocked = true;
 		}
@@ -41,16 +43,10 @@ public class SelectionManager : MonoBehaviour
 			SelectObjectUnderMouse();
 		}
 
-		//if (SelectedObject == null)
-		//{
-		//	Gizmo.SetActive(false);
-		//}
-		//else if (SelectedObject != null)
-		//{
-		//	Gizmo.GetComponent<GizmoController>().m_targetObject = SelectedObject;
-		//	Gizmo.SetActive(true);
-		//	Gizmo.transform.position = SelectedObject.transform.position;
-		//}
+		if (Gizmo != null)
+		{
+			Gizmo.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+		}
 	}
 
 	private void SelectObjectUnderMouse()
@@ -67,25 +63,29 @@ public class SelectionManager : MonoBehaviour
 			{
 				if (SelectedObject != null)
 				{
-					FindFirstObjectByType<UIManager>().ShowToastNotification("Please deselect item first", 1f);
+					FindFirstObjectByType<UIManager>().ShowToastNotification("Please deselect item first", 2f);
 					return;
 				}
-				//ClearSelection();
 				SelectedObject = hitObject;
 				UpdateSelectedLightProperties();
 
 				SelectedItemStorageMat = SelectedObject.GetComponentInChildren<Renderer>().material;
 				SelectedObject.GetComponentInChildren<Renderer>().material = SelectionMat;
 
-				//MoveGizmoPrefab.GetComponent<GizmoController>().m_targetObject = SelectedObject;
 				Gizmo = Instantiate(MoveGizmoPrefab);
 				Gizmo.GetComponent<GizmoController>().m_targetObject = SelectedObject;
 				Gizmo.transform.position = SelectedObject.transform.position;
 
-				//if (ActiveGizmo != null) Destroy(ActiveGizmo);
-				//ActiveGizmo = Instantiate(MoveGizmoPrefab);
-				//ActiveGizmo.GetComponent<MoveGizmo>().Initialize(SelectedObject.transform);
+				Gizmo.transform.localScale = Vector3.one;
 			}
+		}
+		if (CurrentLightProperties.LightsOnPrefab.Length > 0)
+		{
+			UImanager.LightsAnimationDoc.rootVisualElement.Q<Button>("NextLightButton").style.display = DisplayStyle.Flex;
+		}
+		else
+		{
+			UImanager.LightsAnimationDoc.rootVisualElement.Q<Button>("NextLightButton").style.display = DisplayStyle.None;
 		}
 	}
 
@@ -94,9 +94,14 @@ public class SelectionManager : MonoBehaviour
 		if (SelectedObject != null)
 		{
 			ItemManager.SpawnedItems.Remove(SelectedObject);
+			Destroy(Gizmo);
 			Destroy(SelectedObject);
 			CurrentLightProperties = null;
 			SelectedItemStorageMat = null;
+			if (UImanager.AnimationPanelVisible)
+			{
+				UImanager.TogglePanelVisibility("AllOff");
+			}
 		}
 	}
 
@@ -110,6 +115,10 @@ public class SelectionManager : MonoBehaviour
 			SelectedObject.GetComponentInChildren<Renderer>().material = SelectedItemStorageMat;
 			SelectedItemStorageMat = null;
 			SelectedObject = null;
+			if (UImanager.AnimationPanelVisible)
+			{
+				UImanager.TogglePanelVisibility("AllOff");
+			}
 		}
 	}
 

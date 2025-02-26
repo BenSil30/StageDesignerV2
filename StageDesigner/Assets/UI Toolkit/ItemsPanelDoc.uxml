@@ -2,6 +2,6 @@
     <engine:VisualElement name="root" style="flex-grow: 1; flex-direction: column; height: auto; width: auto; padding-left: 0; padding-bottom: 0; margin-top: 20px; margin-left: 40px;">
         <engine:Button text="Back" name="BackButtonItemsPanel" style="width: 132px; font-size: 33px; height: 69px;" />
         <engine:Label text="Remaining Budget: " name="BudgetLabel" style="font-size: 20px; color: rgb(255, 255, 255);" />
-        <engine:ScrollView name="ButtonScroller" horizontal-scroller-visibility="Hidden" tooltip="Scroll for options" style="height: 400px; width: 220px;" />
+        <engine:ScrollView name="ButtonScroller" horizontal-scroller-visibility="Hidden" tooltip="Scroll for options" style="height: 400px; width: 400px;" />
     </engine:VisualElement>
 </engine:UXML>

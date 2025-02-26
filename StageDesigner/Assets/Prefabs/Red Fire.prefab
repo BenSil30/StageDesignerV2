@@ -96,6 +96,7 @@ GameObject:
   m_Component:
   - component: {fileID: 381657569957358075}
   - component: {fileID: 7587423124187113089}
+  - component: {fileID: 2248181509465695220}
   m_Layer: 0
   m_Name: Red Fire
   m_TagString: Untagged
@@ -113,7 +114,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 28.3}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1386848485740055220}
@@ -147,6 +148,27 @@ MonoBehaviour:
   PulseOn: 0
   IsAnimating: 0
   IsANonLightPrefab: 0
+--- !u!65 &2248181509465695220
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5452702312795095903}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.3600928, y: 1, z: 1.2946011}
+  m_Center: {x: -0.08094018, y: 0, z: 0.03203106}
 --- !u!1 &6868756423443495454
 GameObject:
   m_ObjectHideFlags: 0

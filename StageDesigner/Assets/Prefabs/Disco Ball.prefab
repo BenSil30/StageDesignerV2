@@ -507,7 +507,7 @@ Transform:
   m_GameObject: {fileID: 4209629945360662910}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0, y: -0.009081018, z: 3.969438e-10}
+  m_LocalPosition: {x: 0, y: -0.009081018, z: 0}
   m_LocalScale: {x: 0.10086878, y: 0.10086878, z: 0.10086878}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -920,11 +920,11 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5.04, y: 9.88, z: 39.32}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 300, y: 300, z: 300}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 1686542430663641094}
   - {fileID: 4361241739227187291}
+  - {fileID: 1686542430663641094}
   - {fileID: 6585703094963703351}
   - {fileID: 1950704783305459078}
   - {fileID: 237277042896688145}
@@ -964,6 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIManager: {fileID: 0}
+  ItemManager: {fileID: 0}
   KeyframesOnPrefab: []
   ItemCost: 150
   LightsOnPrefab:

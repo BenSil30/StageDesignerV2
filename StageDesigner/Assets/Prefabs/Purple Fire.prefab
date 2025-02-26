@@ -4864,6 +4864,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2193856034848901639}
   - component: {fileID: 5939944473841125069}
+  - component: {fileID: 3799090416317949799}
   m_Layer: 0
   m_Name: Purple Fire
   m_TagString: Untagged
@@ -4881,7 +4882,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 28.3}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6282240242946079975}
@@ -4915,6 +4916,27 @@ MonoBehaviour:
   PulseOn: 0
   IsAnimating: 0
   IsANonLightPrefab: 0
+--- !u!65 &3799090416317949799
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3463191010386273494}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7256905, y: 1.4340639, z: 1.2453417}
+  m_Center: {x: -0.062002182, y: 0.21703196, z: 0.12267065}
 --- !u!1 &4936666240680046504
 GameObject:
   m_ObjectHideFlags: 0

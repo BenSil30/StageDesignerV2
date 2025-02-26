@@ -1,0 +1,7 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=b19eab582283e574b808dbbbf33927f8&amp;type=3#test" />
+    <engine:VisualElement name="Root" style="flex-grow: 1;">
+        <engine:Button text="Back" name="BackButtonObjectives" style="font-size: 32px; width: 200px; margin-left: 15px; margin-top: 15px;" />
+        <engine:VisualElement name="ObjectivesContainer" style="flex-grow: 1; height: 90%; flex-direction: column; width: 852px;" />
+    </engine:VisualElement>
+</engine:UXML>

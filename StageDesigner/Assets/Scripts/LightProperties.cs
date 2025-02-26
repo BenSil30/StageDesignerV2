@@ -10,9 +10,9 @@ using Button = UnityEngine.UIElements.Button;
 public class LightProperties : MonoBehaviour
 {
 	public UIManager UIManager;
+	public ItemManager ItemManager;
 	public List<KeyframeClass> KeyframesOnPrefab = new List<KeyframeClass>(); // Holds keyframes for this light
 
-	// todo make sure prefabs have item cost set
 	public float ItemCost;
 
 	public Light[] LightsOnPrefab;
@@ -33,14 +33,17 @@ public class LightProperties : MonoBehaviour
 
 	private Coroutine RotationCoroutine;
 
-	// todo: do light selection within prefabs that have multiple lights, has to add a new button to the UI for it
-
 	private void Start()
 	{
 		UIManager = FindFirstObjectByType<UIManager>();
+		ItemManager = FindFirstObjectByType<ItemManager>();
 		if (LightsOnPrefab.Length > 0)
 		{
 			SelectedLight = LightsOnPrefab[0];
+		}
+		else
+		{
+			_emissionColor = LightMaterial.GetColor("_EmissionColor");
 		}
 	}
 
@@ -89,14 +92,14 @@ public class LightProperties : MonoBehaviour
 			KeyframesOnPrefab.Add(newKeyframe);
 			KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 		}
-		UIManager um = FindFirstObjectByType<UIManager>();
-		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
+		VisualElement root = UIManager.LightsAnimationDoc.rootVisualElement;
 		Button keyframeButton = root.Q<Button>("AddKeyframeAnimationPanelButton");
 
 		// turn the background of the button a light orange
 		keyframeButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
 		// log with all keyframe added info
 		Debug.Log($"Keyframe added at time: {time} - Position: {transform.position} - Rotation: {transform.rotation.eulerAngles} - Intensity: {SelectedLight.intensity} - Color: {SelectedLight.color} - Rotation Speed: {RotationSpeed} - Pulse Rate: {PulseRate} - Pulse On: {PulseOn} - Is Animating: {IsAnimating}");
+		ItemManager.CheckForObjectiveCompletion();
 	}
 
 	public void UpdateKeyframe(float time)
@@ -104,7 +107,7 @@ public class LightProperties : MonoBehaviour
 		KeyframeClass keyframeToUpdate = KeyframesOnPrefab.Find(x => x.KeyframeTime == time);
 		DeleteKeyframe(time);
 		AddKeyframe(time);
-		FindFirstObjectByType<UIManager>().ShowToastNotification("Keyframe Updated", 1f);
+		UIManager.ShowToastNotification("Keyframe Updated", 2f);
 		KeyframesOnPrefab.Sort((a, b) => a.KeyframeTime.CompareTo(b.KeyframeTime)); // Ensure keyframes are ordered by time
 	}
 
@@ -117,8 +120,8 @@ public class LightProperties : MonoBehaviour
 
 	public void AnimateKeyframes()
 	{
-		if (KeyframesOnPrefab.Count < 0) return;
-		float currentTime = FindFirstObjectByType<UIManager>().TimelineSlider.value;
+		if (KeyframesOnPrefab.Count <= 0) return;
+		float currentTime = UIManager.TimelineSlider.value;
 		KeyframeClass currentKeyframe = null;
 		KeyframeClass nextKeyframe = null;
 
@@ -209,9 +212,8 @@ public class LightProperties : MonoBehaviour
 	// todo: still needs to notify when position or rotation are changed
 	public void NotifyOfValueChange()
 	{
-		UIManager um = FindFirstObjectByType<UIManager>();
-		um.ShowToastNotification("Value Changed", 1f);
-		VisualElement root = um.LightsAnimationDoc.rootVisualElement;
+		//UIManager.ShowToastNotification("Value Changed", 2f);
+		VisualElement root = UIManager.LightsAnimationDoc.rootVisualElement;
 		Button keyframeButton = root.Q<Button>("AddKeyframeAnimationPanelButton");
 		// turn the background of the button a light orange
 		keyframeButton.style.backgroundColor = new StyleColor(new Color(0.9320754f, 0.6493151f, 0.3288643f, 1f));
@@ -221,13 +223,14 @@ public class LightProperties : MonoBehaviour
 	{
 		if (SelectedLight != null)
 		{
-			SelectedLight.intensity = evt.newValue * 10000;
+			SelectedLight.intensity = evt.newValue * 100000;
 		}
 		else if (LightMaterial != null)
 		{
-			Color finalColor = LightMaterial.GetColor("_EmissionColor") * (evt.newValue * 8);
+			Color finalColor = LightMaterial.GetColor("_EmissionColor") * (evt.newValue * 800);
 			LightMaterial.SetColor("_EmissionColor", finalColor);
 		}
+		ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
@@ -243,18 +246,21 @@ public class LightProperties : MonoBehaviour
 			Color lightColor = new Color(UIManager.RedSlider.value, UIManager.GreenSlider.value, UIManager.BlueSlider.value) * UIManager.IntensitySlider.value;
 			LightMaterial.SetColor("_EmissionColor", lightColor);
 		}
+		ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
 	public void RotationSpeedUpdated(ChangeEvent<float> evt)
 	{
 		RotationSpeed = evt.newValue;
+		ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 
 	public void PulseRateUpdated(ChangeEvent<float> evt)
 	{
 		PulseRate = evt.newValue;
+		ItemManager.CheckForObjectiveCompletion();
 		NotifyOfValueChange();
 	}
 

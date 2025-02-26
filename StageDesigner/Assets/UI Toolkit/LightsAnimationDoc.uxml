@@ -3,14 +3,14 @@
     <engine:VisualElement name="Root" style="flex-grow: 0; align-items: flex-start; justify-content: flex-start; width: auto; padding-left: 15px; padding-top: 25px; padding-bottom: 25px; padding-right: -2px; flex-direction: row; height: 90%;">
         <engine:VisualElement style="flex-grow: 0;">
             <engine:Button text="Back" name="BackButtonAnimation" />
-            <engine:Button text="Next Light" name="NextLightButton" />
+            <engine:Button text="Select Next Light on Object" name="NextLightButton" />
             <engine:Slider label="Intensity" value="42" high-value="20" name="LightIntensitySlider" low-value="1" show-input-field="true" fill="false" style="width: 455px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
             <engine:Label text="Color" name="ColorTitle" style="font-size: 17px; color: rgb(255, 255, 255); align-items: auto; align-self: flex-start;" />
-            <engine:Slider label="Red" value="42" high-value="255" name="RedColorSlider" show-input-field="true" fill="false" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
-            <engine:Slider label="Green" value="42" high-value="255" name="GreenColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
-            <engine:Slider label="Blue" value="42" high-value="255" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
-            <engine:Slider label="Pulse Rate" value="0" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
-            <engine:Slider label="Rot Speed" value="0" high-value="100" name="RotSpeedSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+            <engine:Slider label="Red" value="0.5" high-value="1" name="RedColorSlider" show-input-field="true" fill="false" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+            <engine:Slider label="Green" value="0.5" high-value="1" name="GreenColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+            <engine:Slider label="Blue" value="0.5" high-value="1" name="BlueColorSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+            <engine:Slider label="Strobe  Rate" value="0" high-value="10" name="PulseRateSlider" show-input-field="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold;" />
+            <engine:Slider label="Rot Speed" value="0" high-value="100" name="RotSpeedSlider" show-input-field="true" enabled="true" style="width: 500px; color: rgb(255, 255, 255); -unity-text-outline-width: 1px; -unity-font-style: bold; display: none;" />
             <engine:Button text="Add Keyframe" name="AddKeyframeAnimationPanelButton" style="font-size: 24px; background-color: rgb(188, 188, 188);" />
         </engine:VisualElement>
         <engine:VisualElement style="flex-grow: 1; align-items: flex-end;">

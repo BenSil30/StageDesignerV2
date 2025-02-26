@@ -336,6 +336,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5647007555398069491}
   - component: {fileID: 6728378823150503787}
+  - component: {fileID: 638508865280523602}
   m_Layer: 0
   m_Name: Green Fire
   m_TagString: Untagged
@@ -353,7 +354,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.19, y: 5.21, z: 40.28}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5822620793336197469}
@@ -387,6 +388,27 @@ MonoBehaviour:
   PulseOn: 0
   IsAnimating: 0
   IsANonLightPrefab: 0
+--- !u!65 &638508865280523602
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5248328971037583572}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.4141947, y: 1.4951063, z: 1.2920907}
+  m_Center: {x: -0.0051980736, y: 0.24755315, z: 0.14604531}
 --- !u!1 &7853274025475931099
 GameObject:
   m_ObjectHideFlags: 0

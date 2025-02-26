@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using SFB;
 using UnityEditor;
 using UnityEngine;
@@ -10,8 +12,12 @@ using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
+	public bool GameHasBeenEnteredForFirstTime = false;
 	public SelectionManager sm;
 	public BudgetController bc;
+	public ItemManager ItemManager;
+	public CampaignController cc;
+	public StageManager StageManager;
 
 	public UIDocument HUDDoc;
 	public UIDocument ItemsPanelDoc;
@@ -20,6 +26,7 @@ public class UIManager : MonoBehaviour
 	public UIDocument StageSelectionDoc;
 	public UIDocument MusicUploaderDoc;
 	public UIDocument LightsAnimationDoc;
+	public UIDocument ObjectivesDoc;
 	public UIDocument GraphicsSettingsDoc;
 
 	public bool CursorVisible;
@@ -32,6 +39,12 @@ public class UIManager : MonoBehaviour
 	public bool MusicUploaderStartVisible;
 	public bool StageSelectionVisible;
 	public bool GraphicsSettingsVisible;
+	public bool ObjectivesVisible;
+
+	private VisualElement _toastContainer;
+	private Queue<(string, float)> _toastQueue = new();
+	private int _activeToasts = 0;
+	private const int _maxToasts = 2;
 
 	#region HUD UI Elements
 
@@ -41,6 +54,7 @@ public class UIManager : MonoBehaviour
 	private Button _musicMenuButton;
 	private Button _lightsMenuButton;
 	private Button _stageSelectionButton;
+	private Button _objectivesButton;
 
 	private Button _addKeyframeButton;
 	private Button _playPauseMusicHUDButton;
@@ -126,6 +140,12 @@ public class UIManager : MonoBehaviour
 
 	#endregion Animation settings UI Elements
 
+	#region Objective UI Elements
+
+	private Button _backButtonObjectives;
+
+	#endregion Objective UI Elements
+
 	#region Graphics settings UI Elements
 
 	private Button _bloomToggleButton;
@@ -157,6 +177,8 @@ public class UIManager : MonoBehaviour
 	// Start is called before the first frame update
 	private void Start()
 	{
+		//Screen.SetResolution(1080, 1920, FullScreenMode.ExclusiveFullScreen);
+
 		#region HUD UI elements
 
 		VisualElement HUDRoot = HUDDoc.rootVisualElement;
@@ -167,6 +189,7 @@ public class UIManager : MonoBehaviour
 		_musicMenuButton = HUDRoot.Q<Button>("MusicMenuButton");
 		_lightsMenuButton = HUDRoot.Q<Button>("LightsMenuButton");
 		_stageSelectionButton = HUDRoot.Q<Button>("StageSelectionButton");
+		_objectivesButton = HUDRoot.Q<Button>("ObjectivesButton");
 		_addKeyframeButton = HUDRoot.Q<Button>("AddKeyframeButton");
 
 		_playPauseMusicHUDButton = HUDRoot.Q<Button>("PlayPauseMusicHudButton");
@@ -179,6 +202,7 @@ public class UIManager : MonoBehaviour
 		_musicMenuButton.clicked += () => TogglePanelVisibility("MusicUploader");
 		_stageSelectionButton.clicked += () => TogglePanelVisibility("StageSelection");
 		_lightsMenuButton.clicked += () => TogglePanelVisibility("LightsAnimation");
+		_objectivesButton.clicked += () => TogglePanelVisibility("Objectives");
 		_addKeyframeButton.clicked += () => AddKeyframeClicked();
 		_playPauseMusicHUDButton.clicked += PlayPauseMusicClicked;
 		// update keyframes and properties to reflect where the timelines lider is
@@ -187,7 +211,7 @@ public class UIManager : MonoBehaviour
 			if (AudioSource.clip != null)
 			{
 				if (!AudioSource.isPlaying) AudioSource.time = evt.newValue;
-				FindFirstObjectByType<ItemManager>().AnimateAllKeyframes();
+				ItemManager.AnimateAllKeyframes();
 				AddKeyframeAnimationButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
 				//_addKeyframeButton.style.backgroundColor = new StyleColor(new Color(0.7372549f, 0.7372549f, 0.7372549f, 1f));
 			}
@@ -195,7 +219,7 @@ public class UIManager : MonoBehaviour
 		//when dragging the slider, subscibe a method
 		TimelineSlider.RegisterCallback<MouseDownEvent>(evt =>
 		{
-			FindFirstObjectByType<ItemManager>().AnimateAllKeyframes();
+			ItemManager.AnimateAllKeyframes();
 		});
 
 		#endregion HUD UI elements
@@ -205,18 +229,15 @@ public class UIManager : MonoBehaviour
 		VisualElement ItemsPanelRoot = ItemsPanelDoc.rootVisualElement;
 		_backButtonItems = ItemsPanelRoot.Q<Button>("BackButtonItemsPanel");
 		ScrollView ButtonsRoot = ItemsPanelRoot.Q<ScrollView>("ButtonScroller");
-		ItemManager im = FindFirstObjectByType<ItemManager>();
-		for (int i = 0; i < im.AvailableItems.Count; i++)
+		for (int i = 0; i < ItemManager.AvailableItems.Count; i++)
 		{
-			string name = im.AvailableItems[i].name;
+			string name = ItemManager.AvailableItems[i].name;
 			var newButton = new Button(() => ItemSelectedFromPanel(name))
 			{
-				// todo don't add price to button name if sandbox mode is enabled
-				text = $"{name} - ${im.AvailableItems[i].GetComponent<LightProperties>().ItemCost}"
+				text = $"{name} - ${ItemManager.AvailableItems[i].GetComponent<LightProperties>().ItemCost}"
 			};
-			// change the size of newButton to be 200px wide with a font size of 32
-			newButton.style.fontSize = 32;
-			newButton.style.width = 250;
+			newButton.style.fontSize = 28;
+			newButton.style.width = 380;
 			ButtonsRoot.Add(newButton);
 		}
 
@@ -241,8 +262,11 @@ public class UIManager : MonoBehaviour
 		_playSandboxButton.clicked += () => bc.SandboxModeEnabled = true;
 
 		_graphicsSettignsButtonP.clicked += () => TogglePanelVisibility("GraphicsSettings");
-		_exportButtonP.clicked += FindFirstObjectByType<ItemManager>().ExportAllKeyframes;
-		_importButtonP.clicked += FindFirstObjectByType<ItemManager>().ImportKeyframes;
+		_exportButtonP.clicked += ItemManager.ExportAllKeyframes;
+		_exportButtonP.clicked += () => ShowToastNotification("Saved Game", 2f);
+		_exportButtonP.style.display = DisplayStyle.None;
+		_importButtonP.clicked += ItemManager.ImportKeyframes;
+		_importButtonP.clicked += () => ShowToastNotification("Loaded Game", 2f);
 
 		#endregion Start UI Elements
 
@@ -277,6 +301,10 @@ public class UIManager : MonoBehaviour
 		_paramountStageButton.clicked += ParamountStageClicked;
 		_ogdenStageButton.clicked += OgdenStageClicked;
 		_backButton.clicked += () => TogglePanelVisibility("PauseStart");
+
+		_defaultStageButton.clicked += InitializeCampaignManager;
+		_paramountStageButton.clicked += InitializeCampaignManager;
+		_ogdenStageButton.clicked += InitializeCampaignManager;
 		;
 
 		#endregion Stage Selection UI Elements
@@ -320,6 +348,14 @@ public class UIManager : MonoBehaviour
 
 		#endregion Animation settings UI Elements
 
+		#region Objective UI Elements
+
+		VisualElement ObjectivesRoot = ObjectivesDoc.rootVisualElement;
+		_backButtonObjectives = ObjectivesRoot.Q<Button>("BackButtonObjectives");
+		_backButtonObjectives.clicked += () => TogglePanelVisibility("AllOff");
+
+		#endregion Objective UI Elements
+
 		#region Graphics settings UI Elements
 
 		VisualElement GraphicsSettingsRoot = GraphicsSettingsDoc.rootVisualElement;
@@ -347,7 +383,7 @@ public class UIManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape))
+		if (Input.GetKeyDown(KeyCode.Escape) && !StartVisible)
 		{
 			TogglePanelVisibility("AllOff");
 		}
@@ -368,6 +404,10 @@ public class UIManager : MonoBehaviour
 				_playSandboxButton.clicked += () => TogglePanelVisibility("AllOff");
 				_playCampaignButton.style.display = DisplayStyle.None;
 			}
+		}
+		if (GameHasBeenEnteredForFirstTime)
+		{
+			_exportButtonP.style.display = DisplayStyle.Flex;
 		}
 		// hide add keyframe button if nothing selected
 		if (sm.SelectedObject == null || !HUDVisible)
@@ -400,60 +440,79 @@ public class UIManager : MonoBehaviour
 
 		if (bc.SandboxModeEnabled)
 		{
-			BudgetLabel.style.visibility = Visibility.Hidden;
-			BudgetLabel.focusable = false;
-			BudgetLabel.style.display = DisplayStyle.None;
+			BudgetLabel.text = "Remaining Budget: \u221E ";
 		}
 		else
 		{
-			BudgetLabel.text = $"Remaining Budget: ${bc.RemainingBudget}";
+			BudgetLabel.text = $"Remaining Budget: {bc.RemainingBudget}";
 		}
 	}
 
-	#region Keyframe Methods
-
-	private void AddKeyframeClicked()
-	{
-		if (sm.SelectedObject != null)
-		{
-			sm.CurrentLightProperties.AddKeyframe(TimelineSlider.value);
-		}
-		ShowToastNotification("Keyframe Added", 1f);
-		RefreshKeyframeList();
-	}
+	#region Toast Notifs
 
 	public void ShowToastNotification(string msg, float duration)
 	{
+		if (_toastContainer == null)
+		{
+			_toastContainer = new VisualElement();
+			_toastContainer.style.position = Position.Absolute;
+			_toastContainer.style.top = 20;
+			_toastContainer.style.left = new Length(50, LengthUnit.Percent);
+			_toastContainer.style.translate = new Translate(new Length(-50, LengthUnit.Percent), 0, 0);
+			_toastContainer.style.flexDirection = FlexDirection.Column;
+			_toastContainer.style.alignItems = Align.Center;
+			_toastContainer.style.width = new Length(100, LengthUnit.Percent);
+			_toastContainer.focusable = false;
+
+			HUDDoc.rootVisualElement.Add(_toastContainer); // Adjust based on your UI
+		}
+
+		// Add the message to the queue
+		_toastQueue.Enqueue((msg, duration));
+
+		// Try to show the next toast
+		TryShowNextToast();
+	}
+
+	private void TryShowNextToast()
+	{
+		if (_activeToasts < _maxToasts && _toastQueue.Count > 0)
+		{
+			var (msg, duration) = _toastQueue.Dequeue();
+			StartCoroutine(DisplayToast(msg, duration));
+		}
+	}
+
+	private IEnumerator DisplayToast(string msg, float duration)
+	{
+		_activeToasts++; // Track active messages
+
 		Label toastLabel = new Label(msg);
-		VisualElement HUDroot = HUDDoc.rootVisualElement;
-		VisualElement AnimationRoot = LightsAnimationDoc.rootVisualElement;
-		toastLabel.style.position = Position.Absolute;
-		toastLabel.style.top = 20;
-		toastLabel.style.left = 50;
+		toastLabel.style.position = Position.Relative; // So it stacks in the container
 		toastLabel.style.paddingLeft = 10;
 		toastLabel.style.paddingRight = 10;
+		toastLabel.style.paddingTop = 5;
+		toastLabel.style.paddingBottom = 5;
 		toastLabel.style.backgroundColor = new Color(0, 0, 0, 0.8f);
 		toastLabel.style.color = Color.white;
 		toastLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-		toastLabel.style.fontSize = 30;
+		toastLabel.style.fontSize = 20;
 		toastLabel.style.opacity = 1;
 		toastLabel.style.borderBottomLeftRadius = 5;
 		toastLabel.style.borderBottomRightRadius = 5;
 		toastLabel.style.borderTopLeftRadius = 5;
 		toastLabel.style.borderTopRightRadius = 5;
-		toastLabel.style.paddingTop = 5;
-		toastLabel.style.paddingBottom = 5;
+		toastLabel.style.marginBottom = 5; // Space between toasts
+		toastLabel.focusable = false;
+		// make sure that the toast label won't block anything from being clicked
 
-		if (HUDVisible)
-		{
-			HUDroot.Add(toastLabel);
-			StartCoroutine(FadeOutAndRemove(toastLabel, duration, HUDroot));
-		}
-		else if (AnimationPanelVisible)
-		{
-			AnimationRoot.Add(toastLabel);
-			StartCoroutine(FadeOutAndRemove(toastLabel, duration, AnimationRoot));
-		}
+		_toastContainer.Add(toastLabel);
+
+		// Fade out
+		yield return StartCoroutine(FadeOutAndRemove(toastLabel, duration, _toastContainer));
+
+		_activeToasts--; // Decrease count after fade-out
+		TryShowNextToast(); // Check for the next toast
 	}
 
 	private IEnumerator FadeOutAndRemove(Label toastLabel, float duration, VisualElement root)
@@ -470,6 +529,20 @@ public class UIManager : MonoBehaviour
 		}
 
 		root.Remove(toastLabel);
+	}
+
+	#endregion Toast Notifs
+
+	#region Keyframe Methods
+
+	private void AddKeyframeClicked()
+	{
+		if (sm.SelectedObject != null)
+		{
+			sm.CurrentLightProperties.AddKeyframe(TimelineSlider.value);
+		}
+		ShowToastNotification("Keyframe Added", 2f);
+		RefreshKeyframeList();
 	}
 
 	public void RefreshKeyframeList()
@@ -512,7 +585,7 @@ public class UIManager : MonoBehaviour
 		{
 			sm.CurrentLightProperties.DeleteKeyframe(time);
 		}
-		ShowToastNotification($"Keyframe Deleted at {time}", 1f);
+		ShowToastNotification($"Keyframe Deleted at {time}", 2f);
 		RefreshKeyframeList();
 	}
 
@@ -520,200 +593,148 @@ public class UIManager : MonoBehaviour
 	{
 		AudioSource.time = time;
 		TimelineSlider.value = time;
-		FindFirstObjectByType<ItemManager>().AnimateAllKeyframes();
+		foreach (var item in ItemManager.SpawnedItems)
+		{
+			LightProperties lp = item.GetComponent<LightProperties>();
+			if (lp != null)
+			{
+				lp.AnimateKeyframes();
+			}
+		}
 	}
 
 	#endregion Keyframe Methods
 
-	// todo: clean this shit up
+	private void InitializeCampaignManager()
+	{
+		if (!GameHasBeenEnteredForFirstTime)
+		{
+			GameHasBeenEnteredForFirstTime = true;
+			cc.InitializeCampaign();
+
+			_defaultStageButton.clicked -= InitializeCampaignManager;
+			_paramountStageButton.clicked -= InitializeCampaignManager;
+			_ogdenStageButton.clicked -= InitializeCampaignManager;
+		}
+	}
+
 	public void TogglePanelVisibility(string panelName)
 	{
 		if (MusicIsPlaying & panelName != "ItemsPanel")
 		{
 			PlayPauseMusicClicked();
 		}
+		StartVisible = false;
+		HUDVisible = false;
+		ItemsPanelVisible = false;
+		StageSelectionVisible = false;
+		MusicUploaderVisible = false;
+		AnimationPanelVisible = false;
+		GraphicsSettingsVisible = false;
+		ObjectivesVisible = false;
+
+		HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		HUDDoc.rootVisualElement.focusable = false;
+		ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		ItemsPanelDoc.rootVisualElement.focusable = false;
+		StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		StartMenuDoc.rootVisualElement.focusable = false;
+		MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
+		MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		MusicUploaderDoc.rootVisualElement.focusable = false;
+		StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		StageSelectionDoc.rootVisualElement.focusable = false;
+		MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		MusicUploaderDoc.rootVisualElement.focusable = false;
+		LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		LightsAnimationDoc.rootVisualElement.focusable = false;
+		GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		GraphicsSettingsDoc.rootVisualElement.focusable = false;
+		ObjectivesDoc.rootVisualElement.style.visibility = Visibility.Hidden;
+		ObjectivesDoc.rootVisualElement.focusable = false;
+
+		// delete all the labels from the objectives panel but not the back button
+		ObjectivesDoc.rootVisualElement.Q<VisualElement>("ObjectivesContainer").Clear();
 		switch (panelName)
 		{
 			case "PauseStart":
 				StartVisible = true;
 				Time.timeScale = 0f;
 
-				HUDVisible = false;
-				ItemsPanelVisible = false;
-				StageSelectionVisible = false;
-				MusicUploaderVisible = false;
-				AnimationPanelVisible = false;
-				GraphicsSettingsVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
 				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				StartMenuDoc.rootVisualElement.focusable = true;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StageSelectionDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
 
 				break;
 
 			case "MusicUploaderStartMenu":
 				MusicUploaderStartVisible = true;
-				Time.timeScale = 0f;
 
-				HUDVisible = false;
-				ItemsPanelVisible = false;
-				StartVisible = false;
-				StageSelectionVisible = false;
-				AnimationPanelVisible = false;
-				GraphicsSettingsVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
 				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				MusicUploaderStartMenuDoc.rootVisualElement.focusable = true;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.focusable = false;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
 				break;
 
 			case "ItemsPanel":
 				ItemsPanelVisible = true;
 
-				StartVisible = false;
-				MusicUploaderVisible = false;
-				HUDVisible = false;
-				StageSelectionVisible = false;
-				MusicUploaderVisible = false;
-				AnimationPanelVisible = false;
-				GraphicsSettingsVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
 				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				ItemsPanelDoc.rootVisualElement.focusable = true;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StageSelectionDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
 				break;
 
 			case "StageSelection":
 				StageSelectionVisible = true;
 				Time.timeScale = 0f;
 
-				HUDVisible = false;
-				ItemsPanelVisible = false;
-				StartVisible = false;
-				MusicUploaderVisible = false;
-				MusicUploaderVisible = false;
-				AnimationPanelVisible = false;
-				GraphicsSettingsVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
 				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				StageSelectionDoc.rootVisualElement.focusable = true;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
 
 				break;
 
 			case "MusicUploader":
 				MusicUploaderVisible = true;
 
-				HUDVisible = false;
-				ItemsPanelVisible = false;
-				StartVisible = false;
-				MusicUploaderVisible = false;
-				StageSelectionVisible = false;
-				AnimationPanelVisible = false;
-				GraphicsSettingsVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StageSelectionDoc.rootVisualElement.focusable = false;
 				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				MusicUploaderDoc.rootVisualElement.focusable = true;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
-
 				break;
 
 			case "LightsAnimation":
 				AnimationPanelVisible = true;
 
-				HUDVisible = false;
-				ItemsPanelVisible = false;
-				StartVisible = false;
-				MusicUploaderVisible = false;
-				StageSelectionVisible = false;
-				MusicUploaderVisible = false;
-				GraphicsSettingsVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StageSelectionDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
 				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				LightsAnimationDoc.rootVisualElement.focusable = true;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
+
+				break;
+
+			case "Objectives":
+
+				if (cc != null)
+				{
+					for (int i = 0; i <= cc.CurrentObjectives.Count - 1; i++)
+					{
+						Label label = new Label(cc.CurrentObjectives[i].Description);
+						label.style.color = cc.CurrentObjectives[i].IsComplete ? Color.green : Color.red;
+						// set hte label text size as usual
+						label.style.fontSize = 28;
+						label.style.backgroundColor = new Color(0, 0, 0, 0.5f);
+						label.style.paddingLeft = 10;
+						label.style.paddingRight = 10;
+						label.style.paddingTop = 5;
+						label.style.paddingBottom = 5;
+						label.style.borderBottomLeftRadius = 5;
+						label.style.borderBottomRightRadius = 5;
+						label.style.borderTopLeftRadius = 5;
+						label.style.borderTopRightRadius = 5;
+						label.style.marginBottom = 5;
+						// set the name to ObjLevel_# where # is the level
+						label.name = $"ObjLevel_{i}";
+
+						ObjectivesDoc.rootVisualElement.Q<VisualElement>("ObjectivesContainer").Add(label);
+					}
+				}
+				ObjectivesVisible = true;
+
+				ObjectivesDoc.rootVisualElement.style.visibility = Visibility.Visible;
+				ObjectivesDoc.rootVisualElement.focusable = true;
 
 				break;
 
@@ -721,28 +742,6 @@ public class UIManager : MonoBehaviour
 				GraphicsSettingsVisible = true;
 				Time.timeScale = 0f;
 
-				HUDVisible = false;
-				ItemsPanelVisible = false;
-				StartVisible = false;
-				MusicUploaderVisible = false;
-				StageSelectionVisible = false;
-				MusicUploaderVisible = false;
-				AnimationPanelVisible = false;
-
-				HUDDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				HUDDoc.rootVisualElement.focusable = false;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StageSelectionDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
 				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				GraphicsSettingsDoc.rootVisualElement.focusable = true;
 
@@ -750,31 +749,10 @@ public class UIManager : MonoBehaviour
 
 			case "AllOff": // shows the HUD only
 				HUDVisible = true;
-				ItemsPanelVisible = false;
-				StartVisible = false;
-				MusicUploaderVisible = false;
-				StageSelectionVisible = false;
-				MusicUploaderVisible = false;
-				AnimationPanelVisible = false;
-				GraphicsSettingsVisible = false;
 				Time.timeScale = 1f;
 
 				HUDDoc.rootVisualElement.style.visibility = Visibility.Visible;
 				HUDDoc.rootVisualElement.focusable = true;
-				ItemsPanelDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				ItemsPanelDoc.rootVisualElement.focusable = false;
-				StartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StartMenuDoc.rootVisualElement.focusable = false;
-				MusicUploaderStartMenuDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderStartMenuDoc.rootVisualElement.focusable = false;
-				StageSelectionDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				StageSelectionDoc.rootVisualElement.focusable = false;
-				MusicUploaderDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				MusicUploaderDoc.rootVisualElement.focusable = false;
-				LightsAnimationDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				LightsAnimationDoc.rootVisualElement.focusable = false;
-				GraphicsSettingsDoc.rootVisualElement.style.visibility = Visibility.Hidden;
-				GraphicsSettingsDoc.rootVisualElement.focusable = false;
 				break;
 		}
 	}
@@ -805,7 +783,7 @@ public class UIManager : MonoBehaviour
 	private void ItemSelectedFromPanel(string name)
 	{
 		Debug.Log(name + " was pressed");
-		FindFirstObjectByType<ItemManager>().SpawnItem(name);
+		ItemManager.SpawnItem(name);
 		TogglePanelVisibility("AllOff");
 	}
 
@@ -817,24 +795,23 @@ public class UIManager : MonoBehaviour
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
-		FindFirstObjectByType<StageManager>().SwitchStage("Default");
+		StageManager.SwitchStage("Ogden");
 	}
 
 	private void ParamountStageClicked()
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
-		FindFirstObjectByType<StageManager>().SwitchStage("Paramount");
+		StageManager.SwitchStage("AllOff");
+		StageManager.SwitchStage("Paramount");
 	}
 
 	private void OgdenStageClicked()
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		FindFirstObjectByType<StageManager>().SwitchStage("AllOff");
-		FindFirstObjectByType<StageManager>().SwitchStage("Ogden");
+		StageManager.SwitchStage("AllOff");
+		StageManager.SwitchStage("Ogden");
 	}
 
 	#endregion StageSelection Methods

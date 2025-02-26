@@ -5,8 +5,10 @@
             <engine:VisualElement style="flex-grow: 1;">
                 <engine:Button text="Pause" name="PauseMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
                 <engine:Button text="Items" name="ItemMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+                <engine:Button text="Objectives" name="ObjectivesButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
                 <engine:Button text="Music" name="MusicMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
                 <engine:Button text="Select Stage" name="StageSelectionButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />
+                <engine:Label name="BudgetLabel" style="font-size: 30px; color: rgb(255, 255, 255);" />
             </engine:VisualElement>
             <engine:VisualElement style="flex-grow: 1; align-items: auto; margin-right: 15px; margin-top: 0;">
                 <engine:Button text="Animation" name="LightsMenuButton" style="width: 91px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px; height: 41px; margin-left: 15px; margin-top: 15px;" />

@@ -6,35 +6,22 @@ public class BudgetController : MonoBehaviour
 {
 	public ItemManager ItemManager;
 	public SelectionManager SelectionManager;
+	public UIManager UImanager;
 
 	public float Budget;
 	public float RemainingBudget;
 
-	public List<float> BudgetLevels = new List<float>();
+	public List<float> BudgetLevels = new();
 
 	public int CurrentBudgetLevel;
 	public bool SandboxModeEnabled = false;
 
-	private void Start()
-	{
-		if (!SandboxModeEnabled)
-		{
-			CurrentBudgetLevel = 0;
-			Budget = BudgetLevels[CurrentBudgetLevel];
-			RemainingBudget = Budget;
-		}
-	}
-
-	// todo increment level switching
 	public void IncrementBudgetList()
 	{
-		if (CurrentBudgetLevel < BudgetLevels.Count - 1)
-		{
-			CurrentBudgetLevel++;
-			Budget = BudgetLevels[CurrentBudgetLevel];
-			RemainingBudget = Budget;
-			FindFirstObjectByType<UIManager>().BudgetLabel.text = $"Remaining Budget: {RemainingBudget}";
-		}
+		CurrentBudgetLevel++;
+		Budget = BudgetLevels[CurrentBudgetLevel];
+		RemainingBudget = Budget;
+		UImanager.BudgetLabel.text = $"Remaining Budget: {RemainingBudget}";
 	}
 
 	public bool CheckForBudgetSpace(float cost)
@@ -46,7 +33,7 @@ public class BudgetController : MonoBehaviour
 		if (RemainingBudget - cost >= 0)
 		{
 			RemainingBudget -= cost;
-			FindFirstObjectByType<UIManager>().BudgetLabel.text = $"Remaining Budget: {RemainingBudget}";
+			UImanager.BudgetLabel.text = $"Remaining Budget: {RemainingBudget}";
 			return true;
 		}
 		return false;
@@ -58,6 +45,6 @@ public class BudgetController : MonoBehaviour
 		{
 			RemainingBudget -= item.GetComponent<LightProperties>().ItemCost;
 		}
-		FindFirstObjectByType<UIManager>().BudgetLabel.text = $"Remaining Budget: {RemainingBudget}";
+		UImanager.BudgetLabel.text = $"Remaining Budget: {RemainingBudget}";
 	}
 }
