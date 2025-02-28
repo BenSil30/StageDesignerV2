@@ -58,7 +58,7 @@ public class CampaignController : MonoBehaviour
 			case 2:
 				CurrentObjectives.Add(new LevelObjective(5, "The band has requested at least 2 discoballs"));
 				CurrentObjectives.Add(new LevelObjective(6, "The band has requested at least 3 fires of different color"));
-				CurrentObjectives.Add(new LevelObjective(7, "The band has requested at least 3 moving spotlights"));
+				CurrentObjectives.Add(new LevelObjective(7, "The band has requested at least 5 moving spotlights"));
 				break;
 
 			case 3:
@@ -70,11 +70,10 @@ public class CampaignController : MonoBehaviour
 
 			// todo: add things here
 			case 4:
-				CurrentObjectives.Add(new LevelObjective(12, ""));
-				CurrentObjectives.Add(new LevelObjective(13, ""));
-				CurrentObjectives.Add(new LevelObjective(14, ""));
-				CurrentObjectives.Add(new LevelObjective(15, ""));
-				CurrentObjectives.Add(new LevelObjective(16, ""));
+				CurrentObjectives.Add(new LevelObjective(12, "The band has requested that all lights move"));
+				CurrentObjectives.Add(new LevelObjective(13, "The band has requested that you use one at least one light of each kind"));
+				CurrentObjectives.Add(new LevelObjective(14, "The band has requested that you save this setup for future shows"));
+				CurrentObjectives.Add(new LevelObjective(15, "The band has requested that you use the Paramount Stage for this show"));
 				break;
 		}
 		ShowLevelPrompts();
@@ -106,10 +105,11 @@ public class CampaignController : MonoBehaviour
 			UImanager.ShowToastNotification("Level Complete!", 5f);
 			GetComponent<BudgetController>().IncrementBudgetList();
 			LoadLevel(CurrentLevel);
+			UImanager.ShowToastNotification($"Budget Increased {GetComponent<BudgetController>().RemainingBudget}", 3f);
 		}
 		else
 		{
-			UImanager.ShowToastNotification("Campaign Complete!", 5f);
+			UImanager.ShowToastNotification("Campaign Complete! Restart the game to enter Sandbox Mode", 5f);
 		}
 	}
 }

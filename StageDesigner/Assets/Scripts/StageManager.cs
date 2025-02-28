@@ -26,6 +26,14 @@ public class StageManager : MonoBehaviour
 			case "Paramount":
 				currentStage = 1;
 				stages[currentStage].SetActive(true);
+				if (FindFirstObjectByType<CampaignController>().CurrentLevel == 4)
+				{
+					FindFirstObjectByType<CampaignController>().CurrentObjectives
+						.Find(x => x.Description == "The band has requested that you use the Paramount Stage for this show")
+						.IsComplete = true;
+					FindFirstObjectByType<UIManager>().ShowToastNotification("Objective complete: The band has requested that you use the Paramount Stage for this show", 2f);
+				}
+
 				break;
 
 			case "Ogden":

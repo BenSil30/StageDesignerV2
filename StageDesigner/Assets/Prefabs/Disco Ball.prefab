@@ -966,12 +966,11 @@ MonoBehaviour:
   UIManager: {fileID: 0}
   ItemManager: {fileID: 0}
   KeyframesOnPrefab: []
-  ItemCost: 150
+  ItemCost: 500
   LightsOnPrefab:
   - {fileID: 7263324782488222590}
   - {fileID: 2558235305558757866}
   - {fileID: 5396355442284087923}
-  CurrentLightIndex: 0
   LightMaterial: {fileID: 0}
   RotationSpeed: 0
   PulseTimer: 0

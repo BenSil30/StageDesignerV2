@@ -44,7 +44,10 @@ public class UIManager : MonoBehaviour
 	private VisualElement _toastContainer;
 	private Queue<(string, float)> _toastQueue = new();
 	private int _activeToasts = 0;
-	private const int _maxToasts = 2;
+	private const int _maxToasts = 3;
+
+	private const string PLAY_SYMBOL = "\u25B6";
+	private const string PAUSE_SYMBOL = "\u23F8";
 
 	#region HUD UI Elements
 
@@ -120,7 +123,7 @@ public class UIManager : MonoBehaviour
 	#region Animation settings UI Elements
 
 	public Label SelectedObjectTitle;
-	//public Button NextLightButton;
+	public Button NextLightButton;
 
 	public Slider IntensitySlider;
 
@@ -143,6 +146,7 @@ public class UIManager : MonoBehaviour
 	#region Objective UI Elements
 
 	private Button _backButtonObjectives;
+	public Button NextLevelButton;
 
 	#endregion Objective UI Elements
 
@@ -284,6 +288,7 @@ public class UIManager : MonoBehaviour
 		{
 			if (!StartClicked)
 				StartClicked = true;
+			_playPauseMusicHUDButton.text = PLAY_SYMBOL;
 		};
 		_goBackToStartFromMusicUploader.clicked += () => TogglePanelVisibility("PauseStart");
 
@@ -326,8 +331,8 @@ public class UIManager : MonoBehaviour
 		#region Animation settings UI Elements
 
 		VisualElement LightsAnimationRoot = LightsAnimationDoc.rootVisualElement;
-		//NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
-		//NextLightButton.clicked += NextLightButtonHit;
+		NextLightButton = LightsAnimationRoot.Q<Button>("NextLightButton");
+		NextLightButton.clicked += NextLightButtonHit;
 
 		IntensitySlider = LightsAnimationRoot.Q<Slider>("LightIntensitySlider");
 
@@ -352,7 +357,12 @@ public class UIManager : MonoBehaviour
 
 		VisualElement ObjectivesRoot = ObjectivesDoc.rootVisualElement;
 		_backButtonObjectives = ObjectivesRoot.Q<Button>("BackButtonObjectives");
+		NextLevelButton = ObjectivesRoot.Q<Button>("NextLevelButton");
+		NextLevelButton.style.display = DisplayStyle.None;
+
 		_backButtonObjectives.clicked += () => TogglePanelVisibility("AllOff");
+		NextLevelButton.clicked += () => TogglePanelVisibility("AllOff");
+		NextLevelButton.clicked += cc.CheckForLevelCompletion;
 
 		#endregion Objective UI Elements
 
@@ -438,12 +448,18 @@ public class UIManager : MonoBehaviour
 			}
 		}
 
+		if (AnimationPanelVisible && sm.CurrentLightProperties != null && sm.CurrentLightProperties.LightsOnPrefab.Length > 0)
+		{
+			NextLightButton.text = "Select Next Light On Object: Currently Selected: " + sm.CurrentLightProperties.CurrentLightIndex;
+		}
 		if (bc.SandboxModeEnabled)
 		{
+			_objectivesButton.style.display = DisplayStyle.None;
 			BudgetLabel.text = "Remaining Budget: \u221E ";
 		}
 		else
 		{
+			_objectivesButton.style.display = DisplayStyle.Flex;
 			BudgetLabel.text = $"Remaining Budget: {bc.RemainingBudget}";
 		}
 	}
@@ -463,6 +479,7 @@ public class UIManager : MonoBehaviour
 			_toastContainer.style.alignItems = Align.Center;
 			_toastContainer.style.width = new Length(100, LengthUnit.Percent);
 			_toastContainer.focusable = false;
+			_toastContainer.pickingMode = PickingMode.Ignore;
 
 			HUDDoc.rootVisualElement.Add(_toastContainer); // Adjust based on your UI
 		}
@@ -504,7 +521,7 @@ public class UIManager : MonoBehaviour
 		toastLabel.style.borderTopRightRadius = 5;
 		toastLabel.style.marginBottom = 5; // Space between toasts
 		toastLabel.focusable = false;
-		// make sure that the toast label won't block anything from being clicked
+		toastLabel.pickingMode = PickingMode.Ignore;
 
 		_toastContainer.Add(toastLabel);
 
@@ -552,43 +569,40 @@ public class UIManager : MonoBehaviour
 		{
 			foreach (var keyframe in sm.CurrentLightProperties.KeyframesOnPrefab)
 			{
-				if (keyframe.KeyframeLightIndex == 0)
+				// Create a label for each keyframe
+				// also show color and selected light index
+				var keyframeEntry = new VisualElement();
+				keyframeEntry.style.flexDirection = FlexDirection.Row;
+				keyframeEntry.AddToClassList("keyframe-entry");
+
+				var keyframeLabel = new Label($"Time: {keyframe.KeyframeTime} | Light: {keyframe.KeyframeLightIndex} | Type: {keyframe.KeyType}");
+				keyframeLabel.style.color = Color.white;
+				// give it a background and curved corners
+				keyframeLabel.style.backgroundColor = new Color(0, 0, 0, 0.5f);
+				keyframeLabel.style.paddingLeft = 10;
+				keyframeLabel.style.paddingRight = 10;
+				keyframeLabel.style.paddingTop = 5;
+				keyframeLabel.style.paddingBottom = 5;
+				keyframeLabel.style.borderBottomLeftRadius = 5;
+				keyframeLabel.style.borderBottomRightRadius = 5;
+				keyframeLabel.style.borderTopLeftRadius = 5;
+				keyframeLabel.style.borderTopRightRadius = 5;
+
+				keyframeEntry.Add(keyframeLabel);
+
+				var jumpButton = new Button(() => JumpToKeyframe(keyframe.KeyframeTime))
 				{
-					// Create a label for each keyframe
-					// also show color and selected light index
-					var keyframeEntry = new VisualElement();
-					keyframeEntry.style.flexDirection = FlexDirection.Row;
-					keyframeEntry.AddToClassList("keyframe-entry");
+					text = "Jump"
+				};
+				var deleteButton = new Button(() => DeleteKeyframe(keyframe.KeyframeTime))
+				{
+					text = "Delete"
+				};
 
-					var keyframeLabel = new Label($"Time: {keyframe.KeyframeTime} | Type: {keyframe.KeyType}");
-					keyframeLabel.style.color = Color.white;
-					// give it a background and curved corners
-					keyframeLabel.style.backgroundColor = new Color(0, 0, 0, 0.5f);
-					keyframeLabel.style.paddingLeft = 10;
-					keyframeLabel.style.paddingRight = 10;
-					keyframeLabel.style.paddingTop = 5;
-					keyframeLabel.style.paddingBottom = 5;
-					keyframeLabel.style.borderBottomLeftRadius = 5;
-					keyframeLabel.style.borderBottomRightRadius = 5;
-					keyframeLabel.style.borderTopLeftRadius = 5;
-					keyframeLabel.style.borderTopRightRadius = 5;
+				keyframeEntry.Add(jumpButton);
+				keyframeEntry.Add(deleteButton);
 
-					keyframeEntry.Add(keyframeLabel);
-
-					var jumpButton = new Button(() => JumpToKeyframe(keyframe.KeyframeTime))
-					{
-						text = "Jump"
-					};
-					var deleteButton = new Button(() => DeleteKeyframe(keyframe.KeyframeTime))
-					{
-						text = "Delete"
-					};
-
-					keyframeEntry.Add(jumpButton);
-					keyframeEntry.Add(deleteButton);
-
-					KeyframeVisualList.Add(keyframeEntry);
-				}
+				KeyframeVisualList.Add(keyframeEntry);
 			}
 		}
 	}
@@ -607,6 +621,11 @@ public class UIManager : MonoBehaviour
 	{
 		AudioSource.time = time;
 		TimelineSlider.value = time;
+		//if (sm.CurrentLightProperties != null && sm.CurrentLightProperties.LightsOnPrefab.Length > 0)
+		//{
+		//	sm.CurrentLightProperties.CurrentLightIndex = sm.CurrentLightProperties.KeyframesOnPrefab.Find(x => x.KeyframeTime == time).KeyframeLightIndex;
+		//	sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[sm.CurrentLightProperties.CurrentLightIndex];
+		//}
 		foreach (var item in ItemManager.SpawnedItems)
 		{
 			LightProperties lp = item.GetComponent<LightProperties>();
@@ -771,26 +790,23 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	//private void NextLightButtonHit()
-	//{
-	//	if (sm.SelectedObject != null | sm.CurrentLightProperties.LightsOnPrefab.Length == 1)
-	//		return;
-	//	if (
-	//		sm.CurrentLightProperties.CurrentLightIndex
-	//		>= sm.CurrentLightProperties.LightsOnPrefab.Length - 1
-	//	)
-	//	{
-	//		sm.CurrentLightProperties.CurrentLightIndex = 0;
-	//	}
-	//	else
-	//	{
-	//		sm.CurrentLightProperties.CurrentLightIndex++;
-	//	}
-	//	sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[
-	//		sm.CurrentLightProperties.CurrentLightIndex
-	//	];
-	//	sm.CurrentLightProperties.UpdateSliderValues();
-	//}
+	private void NextLightButtonHit()
+	{
+		if (sm.SelectedObject == null | sm.CurrentLightProperties.LightsOnPrefab.Length <= 0)
+			return;
+		sm.CurrentLightProperties.CurrentLightIndex++;
+		if (sm.CurrentLightProperties.CurrentLightIndex < sm.CurrentLightProperties.LightsOnPrefab.Length)
+		{
+			sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[sm.CurrentLightProperties.CurrentLightIndex];
+			sm.CurrentLightProperties.UpdateSliderValues();
+		}
+		else
+		{
+			sm.CurrentLightProperties.CurrentLightIndex = 0;
+			sm.CurrentLightProperties.SelectedLight = sm.CurrentLightProperties.LightsOnPrefab[sm.CurrentLightProperties.CurrentLightIndex];
+			sm.CurrentLightProperties.UpdateSliderValues();
+		}
+	}
 
 	#region Items Methods
 
@@ -809,7 +825,7 @@ public class UIManager : MonoBehaviour
 	{
 		Time.timeScale = 1f;
 		TogglePanelVisibility("AllOff");
-		StageManager.SwitchStage("Ogden");
+		StageManager.SwitchStage("Default");
 	}
 
 	private void ParamountStageClicked()
@@ -894,11 +910,13 @@ public class UIManager : MonoBehaviour
 		{
 			if (MusicIsPlaying)
 			{
+				_playPauseMusicHUDButton.text = PLAY_SYMBOL;
 				AudioSource.Pause();
 				MusicIsPlaying = false;
 			}
 			else
 			{
+				_playPauseMusicHUDButton.text = PAUSE_SYMBOL;
 				AudioSource.Play();
 				MusicIsPlaying = true;
 			}

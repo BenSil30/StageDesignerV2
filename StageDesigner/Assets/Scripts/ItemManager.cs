@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UIElements;
 
 #if UNITY_EDITOR
 
@@ -156,10 +157,10 @@ public class ItemManager : MonoBehaviour
 
 					int movingSpotlightCount = SpawnedItems.Count(item => item.name.Contains("Spotlight")
 												&& item.GetComponent<LightProperties>()?.KeyframesOnPrefab.Count > 0);
-					if (movingSpotlightCount >= 3 && !CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested at least 3 moving spotlights").IsComplete)
+					if (movingSpotlightCount >= 5 && !CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested at least 5 moving spotlights").IsComplete)
 					{
-						CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested at least 3 moving spotlights").IsComplete = true;
-						UImanager.ShowToastNotification("Objective complete: The band has requested at least 3 moving spotlights", 3f);
+						CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested at least 5 moving spotlights").IsComplete = true;
+						UImanager.ShowToastNotification("Objective complete: The band has requested at least 5 moving spotlights", 3f);
 					}
 					break;
 
@@ -251,11 +252,54 @@ public class ItemManager : MonoBehaviour
 					}
 					break;
 
+				// level 4 - all lights move, at least one of each kind
 				case 4:
+					bool hasAllLightsMoving = true;
+					foreach (var light in SpawnedItems)
+					{
+						LightProperties lp = light.GetComponent<LightProperties>();
+						if (lp != null)
+						{
+							if (lp.KeyframesOnPrefab.Count < 1)
+							{
+								hasAllLightsMoving = false;
+							}
+						}
+					}
+					if (!CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested that all lights move").IsComplete)
+					{
+						CampaignController.CurrentObjectives.Find
+							(x => x.Description == "The band has requested that all lights move")
+							.IsComplete = hasAllLightsMoving;
+						if (hasAllLightsMoving)
+							UImanager.ShowToastNotification("Objective complete: The band has requested that all lights move", 3f);
+					}
+
+					int spotlightCount = SpawnedItems.Count(item => item.name.Contains("Spotlight"));
+					int laserCount2 = SpawnedItems.Count(item => item.name.Contains("Laser"));
+					int fireCount2 = SpawnedItems.Count(item => item.name.Contains("Fire"));
+					int discoBallCount = SpawnedItems.Count(item => item.name.Contains("Disco Ball"));
+					int threeLightCount = SpawnedItems.Count(item => item.name.Contains("Three Light"));
+					if (spotlightCount > 0 && laserCount2 > 0 && fireCount2 > 0 && discoBallCount > 0 && threeLightCount > 0 && !CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested that you use one at least one light of each kind").IsComplete)
+					{
+						CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested that you use one at least one light of each kind").IsComplete = true;
+						UImanager.ShowToastNotification("Objective complete: The band has requested that you use one at least one light of each kind", 3f);
+					}
 					break;
 			}
 
-			CampaignController.CheckForLevelCompletion();
+			foreach (var objective in CampaignController.CurrentObjectives)
+			{
+				if (!objective.IsComplete)
+				{
+					//UImanager.NextLevelButton.style.display = DisplayStyle.None;
+					UImanager.NextLevelButton.style.backgroundColor = new StyleColor(new Color(.8f, .0f, .0f));
+					return;
+				}
+			}
+			//UImanager.NextLevelButton.style.display = DisplayStyle.Flex;
+			UImanager.NextLevelButton.style.backgroundColor = new StyleColor(new Color(0.2f, 0.8f, 0.2f));
+			//CampaignController.CheckForLevelCompletion();
 		}
 	}
 
@@ -324,6 +368,11 @@ public class ItemManager : MonoBehaviour
 		File.WriteAllText(filePath, json);
 
 		Debug.Log($"Keyframes exported to {filePath}");
+		if (CampaignController.CurrentLevel == 4)
+		{
+			CampaignController.CurrentObjectives.Find(x => x.Description == "The band has requested that you save this setup for future shows").IsComplete = true;
+			UImanager.ShowToastNotification("Objective complete: The band has requested that you save this setup for future shows", 3f);
+		}
 	}
 
 	// todo: fix this method, the keyframelights need to be properly set or changed
