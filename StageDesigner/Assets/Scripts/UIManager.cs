@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
 	private const int _maxToasts = 3;
 
 	private const string PLAY_SYMBOL = "\u25B6";
-	private const string PAUSE_SYMBOL = "\u23F8";
+	private const string PAUSE_SYMBOL = "\u23F8 ";
 
 	#region HUD UI Elements
 
@@ -178,7 +178,6 @@ public class UIManager : MonoBehaviour
 
 	private Coroutine musicLoadingCoroutine;
 
-	// Start is called before the first frame update
 	private void Start()
 	{
 		//Screen.SetResolution(1080, 1920, FullScreenMode.ExclusiveFullScreen);
